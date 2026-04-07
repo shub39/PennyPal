@@ -4,5 +4,5 @@ data class Category(
     val id: Long,
     val name: String,
     val colorArgb: Int,
-    val categoryIcon: CategoryIcon
+    val categoryIcon: CategoryIcon,
 )

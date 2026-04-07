@@ -7,7 +7,7 @@ enum class Recurrence {
 
     companion object {
         fun Recurrence.toDisplayString(): String {
-            return  when (this) {
+            return when (this) {
                 Recurrence.NONE -> "All"
                 Recurrence.MONTHLY -> "Monthly"
                 Recurrence.WEEKLY -> "Weekly"

@@ -5,5 +5,5 @@ data class Income(
     val amount: Double,
     val recurrence: Recurrence,
     val title: String,
-    val description: String?
+    val description: String?,
 )

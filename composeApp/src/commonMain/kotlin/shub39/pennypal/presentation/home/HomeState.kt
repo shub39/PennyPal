@@ -17,5 +17,5 @@ data class HomeState(
     val totalIncome: Double = 0.0,
     val outstandingBalance: Double = 0.0,
     val allCategories: List<Category> = emptyList(),
-    val selectedRecurrence: Recurrence = Recurrence.NONE
+    val selectedRecurrence: Recurrence = Recurrence.NONE,
 )

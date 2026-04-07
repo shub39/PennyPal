@@ -1,1 +1,1 @@
-# PayU
+# PennyPal

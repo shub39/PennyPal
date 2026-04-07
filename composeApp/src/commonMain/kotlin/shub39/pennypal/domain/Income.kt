@@ -3,7 +3,7 @@ package shub39.pennypal.domain
 data class Income(
     val id: Long,
     val amount: Double,
-    val monthlyRecurring: Boolean,
+    val recurrence: Recurrence,
     val title: String,
     val description: String?
 )

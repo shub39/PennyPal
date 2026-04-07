@@ -1,4 +1,4 @@
-package shub39.payu
+package shub39.pennypal
 
 import androidx.compose.ui.window.ComposeUIViewController
 

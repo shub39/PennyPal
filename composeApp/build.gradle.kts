@@ -23,7 +23,7 @@ kotlin {
     }
 
     android {
-        namespace = "shub39.payu.core"
+        namespace = "shub39.pennypal.core"
         compileSdk = libs.versions.compileSdk.get().toInt()
         androidResources.enable = true
     }
@@ -73,7 +73,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "shub39.payu"
+            packageName = "shub39.pennypal"
             packageVersion = "1.0.0"
         }
     }

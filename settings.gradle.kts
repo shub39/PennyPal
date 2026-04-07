@@ -1,4 +1,4 @@
-rootProject.name = "PayU"
+rootProject.name = "PennyPal"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 

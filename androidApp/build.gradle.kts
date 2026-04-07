@@ -12,7 +12,7 @@ val appVersionCode = 1000
 val appVersionName = "1.0.0"
 
 android {
-    namespace = "shub39.payu"
+    namespace = "shub39.pennypal"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {

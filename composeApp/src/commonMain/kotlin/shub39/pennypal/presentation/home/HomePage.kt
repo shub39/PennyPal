@@ -105,7 +105,7 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                     categoryIcon = CategoryIcon.entries.random(),
                 ),
             onAddCategory = { onAction(HomeAction.AddCategory(it)) },
-            onDismissRequest = { showAddCategorySheet = true },
+            onDismissRequest = { showAddCategorySheet = false },
         )
     }
 
@@ -142,7 +142,6 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                                 shape = MaterialTheme.shapes.large,
                             )
                             .clip(MaterialTheme.shapes.large)
-                            .clickable { TODO() }
                 ) {
                     Box(
                         modifier =
@@ -217,7 +216,7 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                             Recurrence.entries.forEachIndexed { index, recurrence ->
                                 TonalToggleButton(
                                     checked = state.selectedRecurrence == recurrence,
-                                    onCheckedChange = { TODO() },
+                                    onCheckedChange = { onAction(HomeAction.SelectRecurrence(recurrence)) },
                                     shapes =
                                         when (index) {
                                             0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
@@ -245,14 +244,20 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                         }
 
                     if (transactionItems.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxWidth().padding(top = 64.dp),
-                            contentAlignment = Alignment.Center,
+                        Column(
+                            modifier = Modifier.fillMaxWidth().padding(top = 80.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             Text(
                                 text = "No transactions found",
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            Text(
+                                text = "Add a transaction to get started",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                             )
                         }
                     } else {
@@ -285,7 +290,6 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                                                         ),
                                                     shape = RoundedCornerShape(16.dp),
                                                 )
-                                                .clickable { TODO() }
                                                 .clip(RoundedCornerShape(16.dp))
                                     ) {
                                         Row(
@@ -319,6 +323,7 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
 
                                             Card(
                                                 modifier = Modifier,
+                                                onClick = { onAction(HomeAction.DeleteTransaction(item.id)) },
                                                 shape = shape,
                                                 colors =
                                                     when (item.transactionType) {
@@ -465,12 +470,12 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                 modifier = Modifier.align(Alignment.BottomEnd).padding(0.dp),
             ) {
                 FloatingActionButtonMenuItem(
-                    onClick = { showAddCategorySheet = true },
+                    onClick = { showAddCategorySheet = true; fabExpanded = false },
                     text = { Text(text = "Add Category") },
                     icon = {},
                 )
                 FloatingActionButtonMenuItem(
-                    onClick = { showAddTransactionSheet = true },
+                    onClick = { showAddTransactionSheet = true; fabExpanded = false },
                     text = { Text(text = "Add Transaction") },
                     icon = {},
                 )

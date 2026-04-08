@@ -102,6 +102,9 @@ class HomeViewModel(
                 is HomeAction.DeleteTransaction -> {
                     repository.deleteTransaction(action.id)
                 }
+                is HomeAction.SelectRecurrence -> {
+                    _state.update { it.copy(selectedRecurrence = action.recurrence) }
+                }
             }
         }
     }

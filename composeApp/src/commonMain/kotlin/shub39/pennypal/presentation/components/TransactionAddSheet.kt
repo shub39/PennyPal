@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
@@ -36,8 +39,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import kotlin.time.Clock
@@ -91,8 +96,9 @@ fun TransactionAddSheet(
                                         datePickerState.selectedDateMillis!!
                                     )
                             )
+                        showDatePicker = false
                     },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier,
                 ) {
                     Text(text = "Confirm Date")
                 }
@@ -108,111 +114,123 @@ fun TransactionAddSheet(
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .padding(16.dp)
         ) {
-            Box(
-                modifier =
-                    Modifier.size(50.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            shape = MaterialShapes.SoftBurst.toShape(),
-                        ),
-                contentAlignment = Alignment.Center,
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .clip(MaterialTheme.shapes.medium),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Icon(
-                    imageVector = vectorResource(Res.drawable.add),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface,
+                Box(
+                    modifier =
+                        Modifier.size(50.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = MaterialShapes.SoftBurst.toShape(),
+                            ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.add),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+
+                Text(text = "Add New Transaction", style = MaterialTheme.typography.titleLarge)
+
+                OutlinedTextField(
+                    value = newTransaction.amount.toString(),
+                    onValueChange = {
+                        it.toDoubleOrNull()?.let { amt ->
+                            newTransaction = newTransaction.copy(amount = amt)
+                        }
+                    },
+                    label = { Text(text = "Add Amount") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number
+                    )
                 )
-            }
 
-            Text(text = "Add New Transaction", style = MaterialTheme.typography.titleLarge)
+                OutlinedTextField(
+                    value = newTransaction.note.toString(),
+                    onValueChange = { newTransaction = newTransaction.copy(note = it) },
+                    label = { Text(text = "Add Note") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                )
 
-            OutlinedTextField(
-                value = newTransaction.amount.toString(),
-                onValueChange = {
-                    it.toDoubleOrNull()?.let { amt ->
-                        newTransaction = newTransaction.copy(amount = amt)
-                    }
-                },
-                label = { Text(text = "Add Amount") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium,
-            )
-
-            OutlinedTextField(
-                value = newTransaction.note.toString(),
-                onValueChange = { newTransaction = newTransaction.copy(note = it) },
-                label = { Text(text = "Add Note") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium,
-            )
-
-            Column {
-                Card(shape = leadingItemShape()) {
-                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                        Text(text = "Select Category")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                            categories.forEach { category ->
-                                ToggleButton(
-                                    checked = category.id == newTransaction.id,
-                                    onCheckedChange = {
-                                        newTransaction =
-                                            newTransaction.copy(categoryId = category.id)
-                                    },
-                                ) {
-                                    Text(text = category.name)
+                Column {
+                    Card(shape = leadingItemShape()) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                            Text(text = "Select Category")
+                            Spacer(modifier = Modifier.height(8.dp))
+                            FlowRow(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                                categories.forEach { category ->
+                                    ToggleButton(
+                                        checked = category.id == newTransaction.categoryId,
+                                        onCheckedChange = {
+                                            newTransaction =
+                                                newTransaction.copy(categoryId = category.id)
+                                        },
+                                    ) {
+                                        Text(text = category.name)
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                Spacer(modifier = Modifier.height(2.dp))
-                Card(shape = endItemShape()) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Column {
-                            Text(text = "Select Date")
-                            Text(
-                                text =
-                                    newTransaction.date
-                                        .toLocalDateTime(TimeZone.UTC)
-                                        .date
-                                        .format(
-                                            LocalDate.Format {
-                                                day()
-                                                char(' ')
-                                                monthName(MonthNames.ENGLISH_FULL)
-                                                char(' ')
-                                                year()
-                                            }
-                                        ),
-                                style = MaterialTheme.typography.labelMedium,
-                            )
-                        }
-                        IconButton(onClick = { showDatePicker = true }) {
-                            Icon(
-                                imageVector = vectorResource(Res.drawable.edit),
-                                contentDescription = null,
-                            )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    // Select Transaction Type
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Card(shape = endItemShape()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Column {
+                                Text(text = "Select Date")
+                                Text(
+                                    text =
+                                        newTransaction.date
+                                            .toLocalDateTime(TimeZone.UTC)
+                                            .date
+                                            .format(
+                                                LocalDate.Format {
+                                                    day()
+                                                    char(' ')
+                                                    monthName(MonthNames.ENGLISH_FULL)
+                                                    char(' ')
+                                                    year()
+                                                }
+                                            ),
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
+                            IconButton(onClick = { showDatePicker = true }) {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.edit),
+                                    contentDescription = null,
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            Button(
-                onClick = {
-                    onAddTransaction(newTransaction)
-                    onDismissRequest()
-                },
-                enabled = newTransaction.amount >= 0,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(text = "Add Transaction")
+                Button(
+                    onClick = {
+                        onAddTransaction(newTransaction)
+                        onDismissRequest()
+                    },
+                    enabled = newTransaction.amount >= 0,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(text = "Add Transaction")
+                }
             }
         }
     }

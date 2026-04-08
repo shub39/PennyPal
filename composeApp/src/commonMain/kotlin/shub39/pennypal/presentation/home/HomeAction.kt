@@ -1,6 +1,7 @@
 package shub39.pennypal.presentation.home
 
 import shub39.pennypal.domain.Category
+import shub39.pennypal.domain.Recurrence
 import shub39.pennypal.domain.Transaction
 
 sealed interface HomeAction {
@@ -13,4 +14,6 @@ sealed interface HomeAction {
     data class AddTransaction(val transaction: Transaction) : HomeAction
 
     data class DeleteTransaction(val id: Long) : HomeAction
+
+    data class SelectRecurrence(val recurrence: Recurrence) : HomeAction
 }

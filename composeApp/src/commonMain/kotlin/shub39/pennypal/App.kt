@@ -1,6 +1,9 @@
 package shub39.pennypal
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -19,13 +22,13 @@ import shub39.pennypal.viewmodel.HomeViewModel
 @Serializable
 sealed interface AppRoutes {
     @Serializable
-    data object HomePage: NavKey
+    data object HomePage : NavKey
 
     @Serializable
-    data object AnalyticsPage: NavKey
+    data object AnalyticsPage : NavKey
 
     @Serializable
-    data object SettingsPage: NavKey
+    data object SettingsPage : NavKey
 }
 
 val appConfig = SavedStateConfiguration {
@@ -43,19 +46,22 @@ fun App() {
     AppTheme {
         val globalBackStack = rememberNavBackStack(appConfig, AppRoutes.HomePage)
 
-        NavDisplay(
-            backStack = globalBackStack,
-            entryProvider = entryProvider {
-                entry<AppRoutes.HomePage>(metadata = fadeTransitionMetadata()) {
-                    val viewmodel = koinViewModel<HomeViewModel>()
-                    val state by viewmodel.state.collectAsStateWithLifecycle()
+        Scaffold { padding ->
+            NavDisplay(
+                modifier = Modifier.padding(padding),
+                backStack = globalBackStack,
+                entryProvider = entryProvider {
+                    entry<AppRoutes.HomePage>(metadata = fadeTransitionMetadata()) {
+                        val viewmodel = koinViewModel<HomeViewModel>()
+                        val state by viewmodel.state.collectAsStateWithLifecycle()
 
-                    HomePage(
-                        state = state,
-                        onAction = viewmodel::onAction,
-                    )
+                        HomePage(
+                            state = state,
+                            onAction = viewmodel::onAction,
+                        )
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 }

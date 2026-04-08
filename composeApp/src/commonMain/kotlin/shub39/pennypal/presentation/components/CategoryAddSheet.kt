@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -63,108 +66,116 @@ fun CategoryAddSheet(
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .padding(16.dp)
         ) {
-            Box(
-                modifier =
-                    Modifier.size(50.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            shape = MaterialShapes.SoftBurst.toShape(),
-                        ),
-                contentAlignment = Alignment.Center,
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .clip(MaterialTheme.shapes.medium),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Icon(
-                    imageVector = vectorResource(Res.drawable.add),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-
-            Text(text = "Add New Category", style = MaterialTheme.typography.titleLarge)
-
-            OutlinedTextField(
-                value = newCategory.name,
-                onValueChange = { newCategory = newCategory.copy(name = it) },
-                label = { Text(text = "Add Amount") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium,
-            )
-
-            Column {
-                Card(shape = leadingItemShape()) {
-                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                        Text(text = "Select Color")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
-                        ) {
-                            CategoryColors.forEach { color ->
-                                Box(
-                                    modifier =
-                                        Modifier.size(50.dp)
-                                            .background(color = color, shape = CircleShape)
-                                            .border(
-                                                width =
-                                                    if (newCategory.colorArgb == color.toArgb())
-                                                        2.dp
-                                                    else 0.dp,
-                                                color = MaterialTheme.colorScheme.primary,
-                                                shape = CircleShape,
-                                            )
-                                )
-                            }
-                        }
-                    }
+                Box(
+                    modifier =
+                        Modifier.size(50.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = MaterialShapes.SoftBurst.toShape(),
+                            ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.add),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
                 }
-                Spacer(modifier = Modifier.height(2.dp))
-                Card(shape = endItemShape()) {
-                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                        Text(text = "Select Icon")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        FlowRow {
-                            CategoryIcon.entries.forEach { categoryIcon ->
-                                IconToggleButton(
-                                    checked = newCategory.categoryIcon == categoryIcon,
-                                    onCheckedChange = {
-                                        newCategory = newCategory.copy(categoryIcon = categoryIcon)
-                                    },
-                                    colors =
-                                        IconToggleButtonColors(
-                                            containerColor = MaterialTheme.colorScheme.secondary,
-                                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                                            disabledContainerColor =
-                                                MaterialTheme.colorScheme.tertiary,
-                                            disabledContentColor =
-                                                MaterialTheme.colorScheme.onTertiary,
-                                            checkedContainerColor =
-                                                MaterialTheme.colorScheme.primary,
-                                            checkedContentColor =
-                                                MaterialTheme.colorScheme.onPrimary,
-                                        ),
-                                ) {
-                                    Icon(
-                                        imageVector = vectorResource(categoryIcon.toDrawable()),
-                                        contentDescription = null,
+
+                Text(text = "Add New Category", style = MaterialTheme.typography.titleLarge)
+
+                OutlinedTextField(
+                    value = newCategory.name,
+                    onValueChange = { newCategory = newCategory.copy(name = it) },
+                    label = { Text(text = "Add Amount") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                )
+
+                Column {
+                    Card(shape = leadingItemShape()) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                            Text(text = "Select Color")
+                            Spacer(modifier = Modifier.height(8.dp))
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp),
+                            ) {
+                                CategoryColors.forEach { color ->
+                                    Box(
+                                        modifier =
+                                            Modifier.size(50.dp)
+                                                .background(color = color, shape = CircleShape)
+                                                .border(
+                                                    width =
+                                                        if (newCategory.colorArgb == color.toArgb())
+                                                            2.dp
+                                                        else 0.dp,
+                                                    color = MaterialTheme.colorScheme.primary,
+                                                    shape = CircleShape,
+                                                )
                                     )
                                 }
                             }
                         }
                     }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Card(shape = endItemShape()) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                            Text(text = "Select Icon")
+                            Spacer(modifier = Modifier.height(8.dp))
+                            FlowRow {
+                                CategoryIcon.entries.forEach { categoryIcon ->
+                                    IconToggleButton(
+                                        checked = newCategory.categoryIcon == categoryIcon,
+                                        onCheckedChange = {
+                                            newCategory =
+                                                newCategory.copy(categoryIcon = categoryIcon)
+                                        },
+                                        colors =
+                                            IconToggleButtonColors(
+                                                containerColor = MaterialTheme.colorScheme.secondary,
+                                                contentColor = MaterialTheme.colorScheme.onSecondary,
+                                                disabledContainerColor =
+                                                    MaterialTheme.colorScheme.tertiary,
+                                                disabledContentColor =
+                                                    MaterialTheme.colorScheme.onTertiary,
+                                                checkedContainerColor =
+                                                    MaterialTheme.colorScheme.primary,
+                                                checkedContentColor =
+                                                    MaterialTheme.colorScheme.onPrimary,
+                                            ),
+                                    ) {
+                                        Icon(
+                                            imageVector = vectorResource(categoryIcon.toDrawable()),
+                                            contentDescription = null,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-            }
 
-            Button(
-                onClick = {
-                    onAddCategory(newCategory)
-                    onDismissRequest()
-                },
-                enabled = newCategory.name.isNotBlank(),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(text = "Add Category")
+                Button(
+                    onClick = {
+                        onAddCategory(newCategory)
+                        onDismissRequest()
+                    },
+                    enabled = newCategory.name.isNotBlank(),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(text = "Add Category")
+                }
             }
         }
     }

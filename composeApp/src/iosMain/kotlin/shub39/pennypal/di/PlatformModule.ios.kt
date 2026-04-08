@@ -6,7 +6,6 @@ import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 import platform.Foundation.NSHomeDirectory
 import shub39.pennypal.data.database.AppDatabase
-import shub39.pennypal.data.database.instantiateImpl
 
 @Module
 actual class PlatformModules {
@@ -15,7 +14,6 @@ actual class PlatformModules {
         val dbFile = NSHomeDirectory() + "/${AppDatabase.DATABASE_NAME}"
         return Room.databaseBuilder<AppDatabase>(
             name = dbFile,
-            factory = { AppDatabase::class.instantiateImpl() }
         )
             .setDriver(BundledSQLiteDriver())
             .build()

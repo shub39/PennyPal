@@ -24,10 +24,10 @@ import pennypal.composeapp.generated.resources.analytics
 import pennypal.composeapp.generated.resources.home
 import pennypal.composeapp.generated.resources.settings
 import shub39.pennypal.presentation.analytics.AnalyticsPage
-import shub39.pennypal.viewmodel.AnalyticsViewModel
 import shub39.pennypal.presentation.fadeTransitionMetadata
 import shub39.pennypal.presentation.home.HomePage
 import shub39.pennypal.presentation.theme.AppTheme
+import shub39.pennypal.viewmodel.AnalyticsViewModel
 import shub39.pennypal.viewmodel.HomeViewModel
 
 @Serializable

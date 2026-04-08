@@ -1,115 +1,160 @@
 package shub39.pennypal.presentation.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.vectorResource
+import pennypal.composeapp.generated.resources.Res
+import pennypal.composeapp.generated.resources.dark_mode
+import pennypal.composeapp.generated.resources.delete
+import pennypal.composeapp.generated.resources.light_mode
+import shub39.pennypal.domain.AppTheme
+import shub39.pennypal.domain.AppTheme.Companion.toDisplayString
+import shub39.pennypal.presentation.endItemShape
+import shub39.pennypal.presentation.leadingItemShape
+import shub39.pennypal.presentation.listItemColors
 import shub39.pennypal.presentation.theme.AppTheme
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AuthPage(
-    state: SettingsState,
-    onAction: (SettingsAction) -> Unit,
+fun SettingsPage(
+    userName: String,
+    onChangeUserName: (String) -> Unit,
+    appTheme: AppTheme,
+    onChangeAppTheme: (AppTheme) -> Unit,
+    onDeleteData: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(modifier = modifier) { paddingValues ->
-        Box(
-            modifier = Modifier.fillMaxSize().padding(paddingValues),
-            contentAlignment = Alignment.Center,
-        ) {
-            Column {
-                // header
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Box(
-                        modifier =
-                            Modifier.size(50.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.primaryContainer,
-                                    shape = RoundedCornerShape(16.dp),
-                                ),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text = "P",
-                            style =
-                                MaterialTheme.typography.headlineLarge.copy(
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                                ),
-                        )
-                    }
+    var newUserName by remember { mutableStateOf(userName) }
 
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "Welcome to PennyPal",
-                            style = MaterialTheme.typography.titleLarge,
-                        )
-                        Text(
-                            text = "Manage and Track your Expenses Seamlessly",
-                            style =
-                                MaterialTheme.typography.bodyMedium.copy(
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                ),
-                        )
+    Surface(modifier = modifier) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+            Column { Text(text = "Settings", style = MaterialTheme.typography.titleLarge) }
+
+            Column {
+                OutlinedTextField(
+                    value = newUserName,
+                    onValueChange = { newUserName = it },
+                    label = { Text(text = "Edit user name") },
+                    placeholder = { Text(text = "Ex. John Doe") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                )
+                Button(
+                    onClick = { onChangeUserName(newUserName) },
+                    enabled = newUserName.isNotBlank() && newUserName != userName,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(text = "Save")
+                }
+            }
+
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Column(modifier = Modifier.clip(leadingItemShape())) {
+                    ListItem(
+                        leadingContent = {
+                            Icon(
+                                imageVector =
+                                    vectorResource(
+                                        when (appTheme) {
+                                            AppTheme.SYSTEM -> {
+                                                if (isSystemInDarkTheme()) Res.drawable.dark_mode
+                                                else Res.drawable.light_mode
+                                            }
+
+                                            AppTheme.DARK -> Res.drawable.dark_mode
+                                            AppTheme.LIGHT -> Res.drawable.light_mode
+                                        }
+                                    ),
+                                contentDescription = null,
+                            )
+                        },
+                        headlineContent = { Text(text = "AppTheme") },
+                        colors = listItemColors(),
+                    )
+                    Row(
+                        horizontalArrangement =
+                            Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                        modifier =
+                            Modifier.fillMaxWidth()
+                                .background(listItemColors().containerColor)
+                                .padding(start = 52.dp, end = 16.dp, bottom = 8.dp),
+                    ) {
+                        AppTheme.entries.forEach { theme ->
+                            ToggleButton(
+                                checked = theme == appTheme,
+                                onCheckedChange = { onChangeAppTheme(theme) },
+                                modifier = Modifier.weight(1f),
+                                colors =
+                                    ToggleButtonDefaults.toggleButtonColors(
+                                        containerColor =
+                                            MaterialTheme.colorScheme.surfaceContainerLow
+                                    ),
+                            ) {
+                                Text(text = theme.toDisplayString())
+                            }
+                        }
                     }
                 }
 
-                // Setup
-                OutlinedCard(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    shape = MaterialTheme.shapes.large,
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        Column {
-                            Text(text = "Get Started", style = MaterialTheme.typography.titleMedium)
-                            Text(
-                                text = "Enter your name to continue",
-                                style =
-                                    MaterialTheme.typography.bodyMedium.copy(
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    ),
+                Column(modifier = Modifier.clip(endItemShape())) {
+                    ListItem(
+                        leadingContent = {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.delete),
+                                contentDescription = null,
                             )
-                        }
-
-                        OutlinedTextField(
-                            value = state.name,
-                            onValueChange = { onAction(SettingsAction.OnNameChange(it)) },
-                            modifier = Modifier.fillMaxWidth(),
-                            label = { Text(text = "What should we call you?") },
-                            placeholder = { Text(text = "Ex: John Doe") },
-                            shape = MaterialTheme.shapes.medium,
-                        )
-
-                        Button(
-                            onClick = {},
-                            shape = MaterialTheme.shapes.medium,
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text(text = "Continue")
+                        },
+                        headlineContent = { Text(text = "Delete all data") },
+                        supportingContent = {
+                            Text(
+                                text =
+                                    "Delete all data saved in the database and start from scratch",
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee(),
+                            )
+                        },
+                        colors = listItemColors(),
+                    )
+                    Row(
+                        horizontalArrangement =
+                            Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                        modifier =
+                            Modifier.fillMaxWidth()
+                                .background(listItemColors().containerColor)
+                                .padding(start = 52.dp, end = 16.dp, bottom = 8.dp),
+                    ) {
+                        Button(onClick = onDeleteData, modifier = Modifier.fillMaxWidth()) {
+                            Text(text = "Delete")
                         }
                     }
                 }
@@ -121,5 +166,13 @@ fun AuthPage(
 @PreviewLightDark
 @Composable
 private fun Preview() {
-    AppTheme { AuthPage(state = SettingsState(), onAction = {}) }
+    AppTheme {
+        SettingsPage(
+            appTheme = AppTheme.DARK,
+            onChangeAppTheme = {},
+            onDeleteData = {},
+            userName = "User",
+            onChangeUserName = {},
+        )
+    }
 }

@@ -2,23 +2,11 @@ package shub39.pennypal.domain
 
 import kotlinx.coroutines.flow.Flow
 
-data class CategoryAmount(
-    val name: String,
-    val amount: Double,
-    val colorArgb: Int
-)
+data class CategoryAmount(val name: String, val amount: Double, val colorArgb: Int)
 
-data class MonthlyIncomeExpense(
-    val monthName: String,
-    val income: Double,
-    val expense: Double
-)
+data class MonthlyIncomeExpense(val monthName: String, val income: Double, val expense: Double)
 
-data class CategoryMonthlyTrend(
-    val name: String,
-    val values: List<Double>,
-    val colorArgb: Int
-)
+data class CategoryMonthlyTrend(val name: String, val values: List<Double>, val colorArgb: Int)
 
 data class AnalyticsData(
     val avgMonthlyExpenditure: Double,

@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,9 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
@@ -165,16 +162,19 @@ fun TransactionAddSheet(
                 shape = MaterialTheme.shapes.medium,
             )
 
-            LazyColumn(
-                modifier =
-                    Modifier.clip(MaterialTheme.shapes.medium)
-            ) {
+            LazyColumn(modifier = Modifier.clip(MaterialTheme.shapes.medium)) {
                 item {
                     Card(shape = leadingItemShape()) {
                         Column(modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
-                            Text(text = "Select Category", modifier = Modifier.padding(horizontal = 16.dp))
+                            Text(
+                                text = "Select Category",
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                            )
                             Spacer(modifier = Modifier.height(8.dp))
-                            LazyRow(horizontalArrangement = Arrangement.spacedBy(2.dp), contentPadding = PaddingValues(horizontal = 16.dp)) {
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                                contentPadding = PaddingValues(horizontal = 16.dp),
+                            ) {
                                 items(categories) { category ->
                                     ToggleButton(
                                         checked = category.id == newTransaction.categoryId,
@@ -199,7 +199,8 @@ fun TransactionAddSheet(
                                     ToggleButton(
                                         checked = type == newTransaction.transactionType,
                                         onCheckedChange = {
-                                            newTransaction = newTransaction.copy(transactionType = type)
+                                            newTransaction =
+                                                newTransaction.copy(transactionType = type)
                                         },
                                         modifier = Modifier.weight(1f),
                                     ) {

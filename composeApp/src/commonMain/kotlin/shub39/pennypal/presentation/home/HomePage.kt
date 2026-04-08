@@ -1,5 +1,6 @@
 package shub39.pennypal.presentation.home
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -106,11 +107,13 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                             }
                         }
 
-                    TransactionList(
-                        transactions = transactionItems,
-                        allCategories = state.allCategories,
-                        onDeleteTransaction = { onAction(HomeAction.DeleteTransaction(it)) },
-                    )
+                    AnimatedContent(targetState = transactionItems) { observedItems ->
+                        TransactionList(
+                            transactions = observedItems,
+                            allCategories = state.allCategories,
+                            onDeleteTransaction = { onAction(HomeAction.DeleteTransaction(it)) },
+                        )
+                    }
                 }
             }
 

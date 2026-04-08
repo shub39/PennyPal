@@ -141,9 +141,10 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
 
                 if (state.expenseCategoriesComparison.isNotEmpty()) {
                     item {
-                        val expenseCategoriesComparison = remember(state.expenseCategoriesComparison) {
-                            state.expenseCategoriesComparison.map { it.toLine() }
-                        }
+                        val expenseCategoriesComparison =
+                            remember(state.expenseCategoriesComparison) {
+                                state.expenseCategoriesComparison.map { it.toLine() }
+                            }
 
                         Analytic(shape = leadingItemShape()) {
                             Text(
@@ -153,7 +154,8 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
                             )
 
                             LineChart(
-                                modifier = Modifier.padding(horizontal = 8.dp).heightIn(max = 300.dp),
+                                modifier =
+                                    Modifier.padding(horizontal = 8.dp).heightIn(max = 300.dp),
                                 data = expenseCategoriesComparison,
                                 labelHelperProperties =
                                     LabelHelperProperties(
@@ -195,7 +197,8 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
                             Text(
                                 text = "Add more data to continue",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                color =
+                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                             )
                         }
                     }
@@ -203,9 +206,10 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
 
                 if (state.incomeVsExpenseData.isNotEmpty()) {
                     item {
-                        val incomeVsExpenseData = remember(state.incomeVsExpenseData) {
-                            state.incomeVsExpenseData.map { it.toBars() }
-                        }
+                        val incomeVsExpenseData =
+                            remember(state.incomeVsExpenseData) {
+                                state.incomeVsExpenseData.map { it.toBars() }
+                            }
                         // income vs expenses
                         Analytic(shape = endItemShape()) {
                             Text(
@@ -215,7 +219,8 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
                             )
 
                             RowChart(
-                                modifier = Modifier.padding(horizontal = 8.dp).heightIn(max = 300.dp),
+                                modifier =
+                                    Modifier.padding(horizontal = 8.dp).heightIn(max = 300.dp),
                                 data = incomeVsExpenseData,
                                 barProperties =
                                     BarProperties(
@@ -259,9 +264,10 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
 
                 if (state.incomePieChartData.isNotEmpty()) {
                     item {
-                        var incomePieChart by remember(state.incomePieChartData) {
-                            mutableStateOf(state.incomePieChartData.map { it.toPie() })
-                        }
+                        var incomePieChart by
+                            remember(state.incomePieChartData) {
+                                mutableStateOf(state.incomePieChartData.map { it.toPie() })
+                            }
 
                         // Income Pie Chart
                         Analytic(shape = leadingItemShape()) {
@@ -303,9 +309,10 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
                 }
                 if (state.expensePieChartData.isNotEmpty()) {
                     item {
-                        var expensePieChart by remember(state.expensePieChartData) {
-                            mutableStateOf(state.expensePieChartData.map { it.toPie() })
-                        }
+                        var expensePieChart by
+                            remember(state.expensePieChartData) {
+                                mutableStateOf(state.expensePieChartData.map { it.toPie() })
+                            }
 
                         // expense pie chart
                         Analytic(shape = endItemShape()) {

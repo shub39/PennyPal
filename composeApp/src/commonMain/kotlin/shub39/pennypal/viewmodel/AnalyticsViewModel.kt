@@ -15,47 +15,52 @@ import shub39.pennypal.presentation.analytics.IncomeVsExpenseData
 import shub39.pennypal.presentation.analytics.PieChartData
 
 @KoinViewModel
-class AnalyticsViewModel(
-    private val analyticsDataRepo: AnalyticsDataRepo
-) : ViewModel() {
+class AnalyticsViewModel(private val analyticsDataRepo: AnalyticsDataRepo) : ViewModel() {
 
-    val state: StateFlow<AnalyticsState> = analyticsDataRepo.getAnalyticsData()
-        .map { data ->
-            AnalyticsState(
-                avgMonthlyExpenditure = data.avgMonthlyExpenditure,
-                avgMonthlyIncome = data.avgMonthlyIncome,
-                expensePieChartData = data.expensePieChartData.map {
-                    PieChartData(
-                        label = it.name,
-                        data = it.amount,
-                        color = Color(it.colorArgb)
-                    )
-                },
-                incomePieChartData = data.incomePieChartData.map {
-                    PieChartData(
-                        label = it.name,
-                        data = it.amount,
-                        color = Color(it.colorArgb)
-                    )
-                },
-                incomeVsExpenseData = data.incomeVsExpenseData.map {
-                    IncomeVsExpenseData(
-                        label = it.monthName,
-                        income = it.income,
-                        expense = it.expense
-                    )
-                },
-                expenseCategoriesComparison = data.expenseCategoriesComparison.map {
-                    ExpenseCategoriesComparison(
-                        label = it.name,
-                        values = it.values,
-                        color = Color(it.colorArgb)
-                    )
-                }
+    val state: StateFlow<AnalyticsState> =
+        analyticsDataRepo
+            .getAnalyticsData()
+            .map { data ->
+                AnalyticsState(
+                    avgMonthlyExpenditure = data.avgMonthlyExpenditure,
+                    avgMonthlyIncome = data.avgMonthlyIncome,
+                    expensePieChartData =
+                        data.expensePieChartData.map {
+                            PieChartData(
+                                label = it.name,
+                                data = it.amount,
+                                color = Color(it.colorArgb),
+                            )
+                        },
+                    incomePieChartData =
+                        data.incomePieChartData.map {
+                            PieChartData(
+                                label = it.name,
+                                data = it.amount,
+                                color = Color(it.colorArgb),
+                            )
+                        },
+                    incomeVsExpenseData =
+                        data.incomeVsExpenseData.map {
+                            IncomeVsExpenseData(
+                                label = it.monthName,
+                                income = it.income,
+                                expense = it.expense,
+                            )
+                        },
+                    expenseCategoriesComparison =
+                        data.expenseCategoriesComparison.map {
+                            ExpenseCategoriesComparison(
+                                label = it.name,
+                                values = it.values,
+                                color = Color(it.colorArgb),
+                            )
+                        },
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = AnalyticsState(),
             )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = AnalyticsState()
-        )
 }

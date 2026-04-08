@@ -20,10 +20,11 @@ import kotlinx.serialization.modules.polymorphic
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import pennypal.composeapp.generated.resources.Res
-import pennypal.composeapp.generated.resources.add
 import pennypal.composeapp.generated.resources.analytics
 import pennypal.composeapp.generated.resources.home
 import pennypal.composeapp.generated.resources.settings
+import shub39.pennypal.presentation.analytics.AnalyticsPage
+import shub39.pennypal.viewmodel.AnalyticsViewModel
 import shub39.pennypal.presentation.fadeTransitionMetadata
 import shub39.pennypal.presentation.home.HomePage
 import shub39.pennypal.presentation.theme.AppTheme
@@ -106,7 +107,12 @@ fun App() {
                             HomePage(state = state, onAction = viewmodel::onAction)
                         }
 
-                        entry<AppRoutes.AnalyticsPage>(metadata = fadeTransitionMetadata()) {}
+                        entry<AppRoutes.AnalyticsPage>(metadata = fadeTransitionMetadata()) {
+                            val viewModel = koinViewModel<AnalyticsViewModel>()
+                            val state by viewModel.state.collectAsStateWithLifecycle()
+
+                            AnalyticsPage(state = state)
+                        }
 
                         entry<AppRoutes.SettingsPage>(metadata = fadeTransitionMetadata()) {}
                     },

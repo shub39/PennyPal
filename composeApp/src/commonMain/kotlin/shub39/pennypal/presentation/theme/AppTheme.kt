@@ -12,7 +12,6 @@ import com.materialkolor.PaletteStyle
 fun AppTheme(isDark: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     DynamicMaterialTheme(
         seedColor = Color.Black,
-        isAmoled = true,
         style = PaletteStyle.Monochrome,
         isDark = isDark,
         content = content,

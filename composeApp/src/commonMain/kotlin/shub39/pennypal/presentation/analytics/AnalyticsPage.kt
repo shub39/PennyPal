@@ -139,183 +139,210 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
 
                 item { Spacer(modifier = Modifier.height(16.dp)) }
 
-                item {
-                    val expenseCategoriesComparison by remember {
-                        mutableStateOf(state.expenseCategoriesComparison.map { it.toLine() })
+                if (state.expenseCategoriesComparison.isNotEmpty()) {
+                    item {
+                        val expenseCategoriesComparison = remember(state.expenseCategoriesComparison) {
+                            state.expenseCategoriesComparison.map { it.toLine() }
+                        }
+
+                        Analytic(shape = leadingItemShape()) {
+                            Text(
+                                text = "Expense Categories Comparison",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+
+                            LineChart(
+                                modifier = Modifier.padding(horizontal = 8.dp).heightIn(max = 300.dp),
+                                data = expenseCategoriesComparison,
+                                labelHelperProperties =
+                                    LabelHelperProperties(
+                                        textStyle =
+                                            MaterialTheme.typography.labelMedium.copy(
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                    ),
+                                indicatorProperties =
+                                    HorizontalIndicatorProperties(
+                                        textStyle =
+                                            MaterialTheme.typography.labelMedium.copy(
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                    ),
+                                labelProperties =
+                                    LabelProperties(
+                                        enabled = true,
+                                        textStyle =
+                                            MaterialTheme.typography.labelMedium.copy(
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            ),
+                                    ),
+                            )
+                        }
                     }
-
-                    Analytic(shape = leadingItemShape()) {
-                        Text(
-                            text = "Expense Categories Comparison",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-
-                        LineChart(
-                            modifier = Modifier.padding(horizontal = 8.dp).heightIn(max = 300.dp),
-                            data = expenseCategoriesComparison,
-                            labelHelperProperties =
-                                LabelHelperProperties(
-                                    textStyle =
-                                        MaterialTheme.typography.labelMedium.copy(
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                ),
-                            indicatorProperties =
-                                HorizontalIndicatorProperties(
-                                    textStyle =
-                                        MaterialTheme.typography.labelMedium.copy(
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                ),
-                            labelProperties =
-                                LabelProperties(
-                                    enabled = true,
-                                    textStyle =
-                                        MaterialTheme.typography.labelMedium.copy(
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        ),
-                                ),
-                        )
+                } else {
+                    item {
+                        Column(
+                            modifier = modifier.fillMaxWidth().padding(top = 80.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Text(
+                                text = "No Analytics available",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            Text(
+                                text = "Add more data to continue",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            )
+                        }
                     }
                 }
 
-                item {
-                    val incomeVsExpenseData by remember {
-                        mutableStateOf(state.incomeVsExpenseData.map { it.toBars() })
-                    }
-                    // income vs expenses
-                    Analytic(shape = endItemShape()) {
-                        Text(
-                            text = "Expenses Vs Income",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+                if (state.incomeVsExpenseData.isNotEmpty()) {
+                    item {
+                        val incomeVsExpenseData = remember(state.incomeVsExpenseData) {
+                            state.incomeVsExpenseData.map { it.toBars() }
+                        }
+                        // income vs expenses
+                        Analytic(shape = endItemShape()) {
+                            Text(
+                                text = "Expenses Vs Income",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
 
-                        RowChart(
-                            modifier = Modifier.padding(horizontal = 8.dp).heightIn(max = 300.dp),
-                            data = incomeVsExpenseData,
-                            barProperties =
-                                BarProperties(
-                                    cornerRadius = Bars.Data.Radius.Circular(15.dp),
-                                    thickness = 20.dp,
-                                    spacing = 3.dp,
-                                ),
-                            labelHelperProperties =
-                                LabelHelperProperties(
-                                    textStyle =
-                                        MaterialTheme.typography.labelMedium.copy(
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                ),
-                            indicatorProperties =
-                                VerticalIndicatorProperties(
-                                    textStyle =
-                                        MaterialTheme.typography.labelMedium.copy(
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                ),
-                            labelProperties =
-                                LabelProperties(
-                                    enabled = true,
-                                    textStyle =
-                                        MaterialTheme.typography.labelMedium.copy(
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        ),
-                                ),
-                            animationSpec =
-                                spring(
-                                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                                    stiffness = Spring.StiffnessLow,
-                                ),
-                        )
+                            RowChart(
+                                modifier = Modifier.padding(horizontal = 8.dp).heightIn(max = 300.dp),
+                                data = incomeVsExpenseData,
+                                barProperties =
+                                    BarProperties(
+                                        cornerRadius = Bars.Data.Radius.Circular(15.dp),
+                                        thickness = 20.dp,
+                                        spacing = 3.dp,
+                                    ),
+                                labelHelperProperties =
+                                    LabelHelperProperties(
+                                        textStyle =
+                                            MaterialTheme.typography.labelMedium.copy(
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                    ),
+                                indicatorProperties =
+                                    VerticalIndicatorProperties(
+                                        textStyle =
+                                            MaterialTheme.typography.labelMedium.copy(
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                    ),
+                                labelProperties =
+                                    LabelProperties(
+                                        enabled = true,
+                                        textStyle =
+                                            MaterialTheme.typography.labelMedium.copy(
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            ),
+                                    ),
+                                animationSpec =
+                                    spring(
+                                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                                        stiffness = Spring.StiffnessLow,
+                                    ),
+                            )
+                        }
                     }
                 }
 
                 item { Spacer(modifier = Modifier.height(16.dp)) }
 
-                item {
-                    var incomePieChart by remember {
-                        mutableStateOf(state.incomePieChartData.map { it.toPie() })
-                    }
+                if (state.incomePieChartData.isNotEmpty()) {
+                    item {
+                        var incomePieChart by remember(state.incomePieChartData) {
+                            mutableStateOf(state.incomePieChartData.map { it.toPie() })
+                        }
 
-                    // Income Pie Chart
-                    Analytic(shape = leadingItemShape()) {
-                        Text(
-                            text = "Income Distribution",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+                        // Income Pie Chart
+                        Analytic(shape = leadingItemShape()) {
+                            Text(
+                                text = "Income Distribution",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
 
-                        PieChart(
-                            modifier = Modifier.fillMaxWidth().size(200.dp),
-                            data = incomePieChart,
-                            labelHelperProperties =
-                                LabelHelperProperties(
-                                    textStyle =
-                                        MaterialTheme.typography.labelMedium.copy(
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                ),
-                            scaleAnimEnterSpec =
-                                spring<Float>(
-                                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                                    stiffness = Spring.StiffnessLow,
-                                ),
-                            colorAnimEnterSpec = tween(300),
-                            colorAnimExitSpec = tween(300),
-                            scaleAnimExitSpec = tween(300),
-                            spaceDegreeAnimExitSpec = tween(300),
-                            onPieClick = {
-                                val pieIndex = incomePieChart.indexOf(it)
-                                incomePieChart =
-                                    incomePieChart.mapIndexed { mapIndex, pie ->
-                                        pie.copy(selected = pieIndex == mapIndex)
-                                    }
-                            },
-                        )
+                            PieChart(
+                                modifier = Modifier.fillMaxWidth().size(200.dp),
+                                data = incomePieChart,
+                                labelHelperProperties =
+                                    LabelHelperProperties(
+                                        textStyle =
+                                            MaterialTheme.typography.labelMedium.copy(
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                    ),
+                                scaleAnimEnterSpec =
+                                    spring<Float>(
+                                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                                        stiffness = Spring.StiffnessLow,
+                                    ),
+                                colorAnimEnterSpec = tween(300),
+                                colorAnimExitSpec = tween(300),
+                                scaleAnimExitSpec = tween(300),
+                                spaceDegreeAnimExitSpec = tween(300),
+                                onPieClick = {
+                                    val pieIndex = incomePieChart.indexOf(it)
+                                    incomePieChart =
+                                        incomePieChart.mapIndexed { mapIndex, pie ->
+                                            pie.copy(selected = pieIndex == mapIndex)
+                                        }
+                                },
+                            )
+                        }
                     }
                 }
-                item {
-                    var expensePieChart by remember {
-                        mutableStateOf(state.expensePieChartData.map { it.toPie() })
-                    }
+                if (state.expensePieChartData.isNotEmpty()) {
+                    item {
+                        var expensePieChart by remember(state.expensePieChartData) {
+                            mutableStateOf(state.expensePieChartData.map { it.toPie() })
+                        }
 
-                    // expense pie chart
-                    Analytic(shape = endItemShape()) {
-                        Text(
-                            text = "Expense Distribution",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+                        // expense pie chart
+                        Analytic(shape = endItemShape()) {
+                            Text(
+                                text = "Expense Distribution",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
 
-                        PieChart(
-                            modifier = Modifier.fillMaxWidth().size(200.dp),
-                            data = expensePieChart,
-                            labelHelperProperties =
-                                LabelHelperProperties(
-                                    textStyle =
-                                        MaterialTheme.typography.labelMedium.copy(
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                ),
-                            scaleAnimEnterSpec =
-                                spring<Float>(
-                                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                                    stiffness = Spring.StiffnessLow,
-                                ),
-                            colorAnimEnterSpec = tween(300),
-                            colorAnimExitSpec = tween(300),
-                            scaleAnimExitSpec = tween(300),
-                            spaceDegreeAnimExitSpec = tween(300),
-                            onPieClick = {
-                                val pieIndex = expensePieChart.indexOf(it)
-                                expensePieChart =
-                                    expensePieChart.mapIndexed { mapIndex, pie ->
-                                        pie.copy(selected = pieIndex == mapIndex)
-                                    }
-                            },
-                        )
+                            PieChart(
+                                modifier = Modifier.fillMaxWidth().size(200.dp),
+                                data = expensePieChart,
+                                labelHelperProperties =
+                                    LabelHelperProperties(
+                                        textStyle =
+                                            MaterialTheme.typography.labelMedium.copy(
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                    ),
+                                scaleAnimEnterSpec =
+                                    spring<Float>(
+                                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                                        stiffness = Spring.StiffnessLow,
+                                    ),
+                                colorAnimEnterSpec = tween(300),
+                                colorAnimExitSpec = tween(300),
+                                scaleAnimExitSpec = tween(300),
+                                spaceDegreeAnimExitSpec = tween(300),
+                                onPieClick = {
+                                    val pieIndex = expensePieChart.indexOf(it)
+                                    expensePieChart =
+                                        expensePieChart.mapIndexed { mapIndex, pie ->
+                                            pie.copy(selected = pieIndex == mapIndex)
+                                        }
+                                },
+                            )
+                        }
                     }
                 }
             }

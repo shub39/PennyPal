@@ -5,12 +5,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -161,102 +165,102 @@ fun TransactionAddSheet(
                 shape = MaterialTheme.shapes.medium,
             )
 
-            Column(
+            LazyColumn(
                 modifier =
-                    Modifier.weight(1f)
-                        .verticalScroll(rememberScrollState())
-                        .clip(MaterialTheme.shapes.medium)
+                    Modifier.clip(MaterialTheme.shapes.medium)
             ) {
-                Card(shape = leadingItemShape()) {
-                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                        Text(text = "Select Category")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                            categories.forEach { category ->
-                                ToggleButton(
-                                    checked = category.id == newTransaction.categoryId,
-                                    onCheckedChange = {
-                                        newTransaction =
-                                            newTransaction.copy(categoryId = category.id)
-                                    },
-                                ) {
-                                    Text(text = category.name)
+                item {
+                    Card(shape = leadingItemShape()) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
+                            Text(text = "Select Category", modifier = Modifier.padding(horizontal = 16.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
+                            LazyRow(horizontalArrangement = Arrangement.spacedBy(2.dp), contentPadding = PaddingValues(horizontal = 16.dp)) {
+                                items(categories) { category ->
+                                    ToggleButton(
+                                        checked = category.id == newTransaction.categoryId,
+                                        onCheckedChange = {
+                                            newTransaction =
+                                                newTransaction.copy(categoryId = category.id)
+                                        },
+                                    ) {
+                                        Text(text = category.name)
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                Spacer(modifier = Modifier.height(2.dp))
-                Card(shape = middleItemShape()) {
-                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                        Text(text = "Select Transaction Type")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                            TransactionType.entries.forEach { type ->
-                                ToggleButton(
-                                    checked = type == newTransaction.transactionType,
-                                    onCheckedChange = {
-                                        newTransaction = newTransaction.copy(transactionType = type)
-                                    },
-                                    modifier = Modifier.weight(1f),
-                                ) {
-                                    Text(text = type.toDisplayString())
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Card(shape = middleItemShape()) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                            Text(text = "Select Transaction Type")
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                                TransactionType.entries.forEach { type ->
+                                    ToggleButton(
+                                        checked = type == newTransaction.transactionType,
+                                        onCheckedChange = {
+                                            newTransaction = newTransaction.copy(transactionType = type)
+                                        },
+                                        modifier = Modifier.weight(1f),
+                                    ) {
+                                        Text(text = type.toDisplayString())
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                Spacer(modifier = Modifier.height(2.dp))
-                Card(shape = middleItemShape()) {
-                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                        Text(text = "Select Recurrence")
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                            Recurrence.entries.forEach { recurrence ->
-                                ToggleButton(
-                                    checked = recurrence == newTransaction.recurrence,
-                                    onCheckedChange = {
-                                        newTransaction =
-                                            newTransaction.copy(recurrence = recurrence)
-                                    },
-                                    modifier = Modifier.weight(1f),
-                                ) {
-                                    Text(text = recurrence.toDisplayString())
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Card(shape = middleItemShape()) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                            Text(text = "Select Recurrence")
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                                Recurrence.entries.forEach { recurrence ->
+                                    ToggleButton(
+                                        checked = recurrence == newTransaction.recurrence,
+                                        onCheckedChange = {
+                                            newTransaction =
+                                                newTransaction.copy(recurrence = recurrence)
+                                        },
+                                        modifier = Modifier.weight(1f),
+                                    ) {
+                                        Text(text = recurrence.toDisplayString())
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                Spacer(modifier = Modifier.height(2.dp))
-                Card(shape = endItemShape()) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        Column {
-                            Text(text = "Select Date")
-                            Text(
-                                text =
-                                    newTransaction.date
-                                        .toLocalDateTime(TimeZone.UTC)
-                                        .date
-                                        .format(
-                                            LocalDate.Format {
-                                                day()
-                                                char(' ')
-                                                monthName(MonthNames.ENGLISH_FULL)
-                                                char(' ')
-                                                year()
-                                            }
-                                        ),
-                                style = MaterialTheme.typography.labelMedium,
-                            )
-                        }
-                        IconButton(onClick = { showDatePicker = true }) {
-                            Icon(
-                                imageVector = vectorResource(Res.drawable.edit),
-                                contentDescription = null,
-                            )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Card(shape = endItemShape()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Column {
+                                Text(text = "Select Date")
+                                Text(
+                                    text =
+                                        newTransaction.date
+                                            .toLocalDateTime(TimeZone.UTC)
+                                            .date
+                                            .format(
+                                                LocalDate.Format {
+                                                    day()
+                                                    char(' ')
+                                                    monthName(MonthNames.ENGLISH_FULL)
+                                                    char(' ')
+                                                    year()
+                                                }
+                                            ),
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
+                            IconButton(onClick = { showDatePicker = true }) {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.edit),
+                                    contentDescription = null,
+                                )
+                            }
                         }
                     }
                 }

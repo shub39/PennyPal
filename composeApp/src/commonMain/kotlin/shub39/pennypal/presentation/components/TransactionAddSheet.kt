@@ -62,8 +62,10 @@ import shub39.pennypal.domain.CategoryIcon
 import shub39.pennypal.domain.Recurrence
 import shub39.pennypal.domain.Transaction
 import shub39.pennypal.domain.TransactionType
+import shub39.pennypal.domain.TransactionType.Companion.toDisplayString
 import shub39.pennypal.presentation.endItemShape
 import shub39.pennypal.presentation.leadingItemShape
+import shub39.pennypal.presentation.middleItemShape
 import shub39.pennypal.presentation.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -185,7 +187,26 @@ fun TransactionAddSheet(
                         }
                     }
                     Spacer(modifier = Modifier.height(2.dp))
-                    // Select Transaction Type
+                    Card(shape = middleItemShape()) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                            Text(text = "Select Transaction Type")
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                                TransactionType.entries.forEach { type ->
+                                    ToggleButton(
+                                        checked = type == newTransaction.transactionType,
+                                        onCheckedChange = {
+                                            newTransaction =
+                                                newTransaction.copy(transactionType = type)
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text(text = type.toDisplayString())
+                                    }
+                                }
+                            }
+                        }
+                    }
                     Spacer(modifier = Modifier.height(2.dp))
                     Card(shape = endItemShape()) {
                         Row(

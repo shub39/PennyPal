@@ -1,6 +1,7 @@
 package shub39.pennypal
 
 import androidx.compose.runtime.*
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -9,7 +10,11 @@ import androidx.savedstate.serialization.SavedStateConfiguration
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
+import org.koin.compose.viewmodel.koinViewModel
+import shub39.pennypal.presentation.fadeTransitionMetadata
+import shub39.pennypal.presentation.home.HomePage
 import shub39.pennypal.presentation.theme.AppTheme
+import shub39.pennypal.viewmodel.HomeViewModel
 
 @Serializable
 sealed interface AppRoutes {
@@ -41,7 +46,15 @@ fun App() {
         NavDisplay(
             backStack = globalBackStack,
             entryProvider = entryProvider {
+                entry<AppRoutes.HomePage>(metadata = fadeTransitionMetadata()) {
+                    val viewmodel = koinViewModel<HomeViewModel>()
+                    val state by viewmodel.state.collectAsStateWithLifecycle()
 
+                    HomePage(
+                        state = state,
+                        onAction = viewmodel::onAction,
+                    )
+                }
             }
         )
     }

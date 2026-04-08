@@ -46,6 +46,7 @@ kotlin {
             implementation(libs.jetbrains.navigation3.ui)
 
             implementation(libs.androidx.room.runtime)
+            implementation(libs.androidx.sqlite.bundled)
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)

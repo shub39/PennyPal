@@ -243,169 +243,194 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                                 Recurrence.MONTHLY -> it.recurrence == Recurrence.MONTHLY
                             }
                         }
-                    val itemsGroupedByCategory =
-                        transactionItems.groupBy { item ->
-                            state.allCategories.find { it.id == item.categoryId }!!
+
+                    if (transactionItems.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().padding(top = 64.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = "No transactions found",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
                         }
-                    LazyColumn(
-                        modifier =
-                            Modifier.fillMaxWidth()
-                                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
-                        contentPadding = PaddingValues(top = 8.dp, bottom = 60.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp),
-                    ) {
-                        itemsGroupedByCategory.forEach { group ->
-                            item {
-                                Box(
-                                    modifier =
-                                        Modifier.fillMaxWidth()
-                                            .background(
-                                                brush =
-                                                    Brush.horizontalGradient(
-                                                        0f to
-                                                            MaterialTheme.colorScheme
-                                                                .surfaceContainerHighest,
-                                                        0.7f to
-                                                            Color(group.key.colorArgb)
-                                                                .copy(alpha = 0.5f),
-                                                        1f to Color(group.key.colorArgb),
-                                                    ),
-                                                shape = RoundedCornerShape(16.dp),
-                                            )
-                                            .clickable { TODO() }
-                                            .clip(RoundedCornerShape(16.dp))
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        modifier = Modifier.padding(8.dp),
+                    } else {
+                        val itemsGroupedByCategory =
+                            transactionItems.groupBy { item ->
+                                state.allCategories.find { it.id == item.categoryId }!!
+                            }
+                        LazyColumn(
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                            contentPadding = PaddingValues(top = 8.dp, bottom = 60.dp),
+                            verticalArrangement = Arrangement.spacedBy(20.dp),
+                        ) {
+                            itemsGroupedByCategory.forEach { group ->
+                                item {
+                                    Box(
+                                        modifier =
+                                            Modifier.fillMaxWidth()
+                                                .background(
+                                                    brush =
+                                                        Brush.horizontalGradient(
+                                                            0f to
+                                                                MaterialTheme.colorScheme
+                                                                    .surfaceContainerHighest,
+                                                            0.7f to
+                                                                Color(group.key.colorArgb)
+                                                                    .copy(alpha = 0.5f),
+                                                            1f to Color(group.key.colorArgb),
+                                                        ),
+                                                    shape = RoundedCornerShape(16.dp),
+                                                )
+                                                .clickable { TODO() }
+                                                .clip(RoundedCornerShape(16.dp))
                                     ) {
-                                        Icon(
-                                            imageVector =
-                                                vectorResource(group.key.categoryIcon.toDrawable()),
-                                            contentDescription = null,
-                                        )
-                                        Text(
-                                            text = group.key.name,
-                                            style = MaterialTheme.typography.titleSmall,
-                                        )
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                    group.value.forEachIndexed { index, item ->
-                                        val shape =
-                                            when {
-                                                group.value.size == 1 -> detachedItemShape()
-                                                index == 0 -> leadingItemShape()
-                                                index == group.value.size - 1 -> endItemShape()
-                                                else -> middleItemShape()
-                                            }
-
-                                        Card(
-                                            modifier = Modifier,
-                                            shape = shape,
-                                            colors =
-                                                when (item.transactionType) {
-                                                    TransactionType.INCOME ->
-                                                        CardDefaults.cardColors(
-                                                            containerColor = Color.Transparent,
-                                                            contentColor =
-                                                                MaterialTheme.colorScheme
-                                                                    .onPrimaryContainer,
-                                                        )
-
-                                                    TransactionType.EXPENSE ->
-                                                        CardDefaults.cardColors(
-                                                            containerColor = Color.Transparent,
-                                                            contentColor =
-                                                                MaterialTheme.colorScheme
-                                                                    .onSecondaryContainer,
-                                                        )
-                                                },
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                            modifier = Modifier.padding(8.dp),
                                         ) {
-                                            Row(
-                                                modifier =
-                                                    Modifier.background(
-                                                            brush =
-                                                                when (item.transactionType) {
-                                                                    TransactionType.INCOME ->
-                                                                        Brush.linearGradient(
-                                                                            0f to
-                                                                                MaterialTheme
-                                                                                    .colorScheme
-                                                                                    .primaryContainer,
-                                                                            0.7f to
-                                                                                Color.Green.copy(
-                                                                                    alpha = 0.3f
-                                                                                ),
-                                                                            0.95f to
-                                                                                Color.Green.copy(
-                                                                                    alpha = 0.5f
-                                                                                ),
-                                                                            1f to
-                                                                                Color.Green.copy(
-                                                                                    alpha = 0.6f
-                                                                                ),
-                                                                        )
-
-                                                                    TransactionType.EXPENSE ->
-                                                                        Brush.linearGradient(
-                                                                            0f to
-                                                                                MaterialTheme
-                                                                                    .colorScheme
-                                                                                    .secondaryContainer,
-                                                                            0.7f to
-                                                                                Color.Red.copy(
-                                                                                    alpha = 0.3f
-                                                                                ),
-                                                                            0.95f to
-                                                                                Color.Red.copy(
-                                                                                    alpha = 0.5f
-                                                                                ),
-                                                                            1f to
-                                                                                Color.Red.copy(
-                                                                                    alpha = 0.6f
-                                                                                ),
-                                                                        )
-                                                                }
-                                                        )
-                                                        .fillMaxWidth()
-                                                        .padding(16.dp),
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                            ) {
-                                                Column {
-                                                    Text(
-                                                        text =
-                                                            "${if (item.transactionType == TransactionType.INCOME) "+" else "-"}₹ ${item.amount.roundToInt()}",
-                                                        style = MaterialTheme.typography.bodyLarge,
-                                                    )
-                                                    item.note?.let {
-                                                        Text(
-                                                            text = it,
-                                                            style =
-                                                                MaterialTheme.typography.labelMedium,
-                                                        )
-                                                    }
+                                            Icon(
+                                                imageVector =
+                                                    vectorResource(
+                                                        group.key.categoryIcon.toDrawable()
+                                                    ),
+                                                contentDescription = null,
+                                            )
+                                            Text(
+                                                text = group.key.name,
+                                                style = MaterialTheme.typography.titleSmall,
+                                            )
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                        group.value.forEachIndexed { index, item ->
+                                            val shape =
+                                                when {
+                                                    group.value.size == 1 -> detachedItemShape()
+                                                    index == 0 -> leadingItemShape()
+                                                    index == group.value.size - 1 -> endItemShape()
+                                                    else -> middleItemShape()
                                                 }
 
-                                                Text(
-                                                    text =
-                                                        item.date
-                                                            .toLocalDateTime(TimeZone.UTC)
-                                                            .date
-                                                            .format(
-                                                                LocalDate.Format {
-                                                                    day()
-                                                                    char(' ')
-                                                                    monthName(
-                                                                        MonthNames
-                                                                            .ENGLISH_ABBREVIATED
-                                                                    )
-                                                                }
+                                            Card(
+                                                modifier = Modifier,
+                                                shape = shape,
+                                                colors =
+                                                    when (item.transactionType) {
+                                                        TransactionType.INCOME ->
+                                                            CardDefaults.cardColors(
+                                                                containerColor = Color.Transparent,
+                                                                contentColor =
+                                                                    MaterialTheme.colorScheme
+                                                                        .onPrimaryContainer,
                                                             )
-                                                )
+
+                                                        TransactionType.EXPENSE ->
+                                                            CardDefaults.cardColors(
+                                                                containerColor = Color.Transparent,
+                                                                contentColor =
+                                                                    MaterialTheme.colorScheme
+                                                                        .onSecondaryContainer,
+                                                            )
+                                                    },
+                                            ) {
+                                                Row(
+                                                    modifier =
+                                                        Modifier.background(
+                                                                brush =
+                                                                    when (item.transactionType) {
+                                                                        TransactionType.INCOME ->
+                                                                            Brush.linearGradient(
+                                                                                0f to
+                                                                                    MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primaryContainer,
+                                                                                0.7f to
+                                                                                    Color.Green
+                                                                                        .copy(
+                                                                                            alpha =
+                                                                                                0.3f
+                                                                                        ),
+                                                                                0.95f to
+                                                                                    Color.Green
+                                                                                        .copy(
+                                                                                            alpha =
+                                                                                                0.5f
+                                                                                        ),
+                                                                                1f to
+                                                                                    Color.Green
+                                                                                        .copy(
+                                                                                            alpha =
+                                                                                                0.6f
+                                                                                        ),
+                                                                            )
+
+                                                                        TransactionType.EXPENSE ->
+                                                                            Brush.linearGradient(
+                                                                                0f to
+                                                                                    MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .secondaryContainer,
+                                                                                0.7f to
+                                                                                    Color.Red.copy(
+                                                                                        alpha = 0.3f
+                                                                                    ),
+                                                                                0.95f to
+                                                                                    Color.Red.copy(
+                                                                                        alpha = 0.5f
+                                                                                    ),
+                                                                                1f to
+                                                                                    Color.Red.copy(
+                                                                                        alpha = 0.6f
+                                                                                    ),
+                                                                            )
+                                                                    }
+                                                            )
+                                                            .fillMaxWidth()
+                                                            .padding(16.dp),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement =
+                                                        Arrangement.SpaceBetween,
+                                                ) {
+                                                    Column {
+                                                        Text(
+                                                            text =
+                                                                "${if (item.transactionType == TransactionType.INCOME) "+" else "-"}₹ ${item.amount.roundToInt()}",
+                                                            style =
+                                                                MaterialTheme.typography.bodyLarge,
+                                                        )
+                                                        item.note?.let {
+                                                            Text(
+                                                                text = it,
+                                                                style =
+                                                                    MaterialTheme.typography
+                                                                        .labelMedium,
+                                                            )
+                                                        }
+                                                    }
+
+                                                    Text(
+                                                        text =
+                                                            item.date
+                                                                .toLocalDateTime(TimeZone.UTC)
+                                                                .date
+                                                                .format(
+                                                                    LocalDate.Format {
+                                                                        day()
+                                                                        char(' ')
+                                                                        monthName(
+                                                                            MonthNames
+                                                                                .ENGLISH_ABBREVIATED
+                                                                        )
+                                                                    }
+                                                                )
+                                                    )
+                                                }
                                             }
                                         }
                                     }

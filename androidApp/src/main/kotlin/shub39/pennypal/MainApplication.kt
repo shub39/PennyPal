@@ -3,15 +3,13 @@ package shub39.pennypal
 import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.plugin.module.dsl.startKoin
-import shub39.pennypal.di.Module
-import shub39.pennypal.di.PlatformModule
+import shub39.pennypal.di.initKoin
 
 class MainApplication: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        startKoin<Module> {
+        initKoin {
             androidLogger()
             androidContext(this@MainApplication)
         }

@@ -1,6 +1,6 @@
-package shub39.pennypal.presentation.auth
+package shub39.pennypal.presentation.settings
 
-data class AuthState(
+data class SettingsState(
     val name: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String? = null,

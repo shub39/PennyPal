@@ -1,4 +1,4 @@
-package shub39.pennypal.presentation.auth
+package shub39.pennypal.presentation.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import shub39.pennypal.presentation.theme.AppTheme
 
 @Composable
-fun AuthPage(state: AuthState, onAction: (AuthAction) -> Unit, modifier: Modifier = Modifier) {
+fun AuthPage(state: SettingsState, onAction: (SettingsAction) -> Unit, modifier: Modifier = Modifier) {
     Scaffold(modifier = modifier) { paddingValues ->
         Box(
             modifier = Modifier.fillMaxSize().padding(paddingValues),
@@ -39,7 +39,7 @@ fun AuthPage(state: AuthState, onAction: (AuthAction) -> Unit, modifier: Modifie
                 ) {
                     Box(
                         modifier =
-                            Modifier.size(75.dp)
+                            Modifier.size(50.dp)
                                 .background(
                                     color = MaterialTheme.colorScheme.primaryContainer,
                                     shape = RoundedCornerShape(16.dp),
@@ -93,7 +93,7 @@ fun AuthPage(state: AuthState, onAction: (AuthAction) -> Unit, modifier: Modifie
 
                         OutlinedTextField(
                             value = state.name,
-                            onValueChange = { onAction(AuthAction.OnNameChange(it)) },
+                            onValueChange = { onAction(SettingsAction.OnNameChange(it)) },
                             modifier = Modifier.fillMaxWidth(),
                             label = { Text(text = "What should we call you?") },
                             placeholder = { Text(text = "Ex: John Doe") },
@@ -117,5 +117,5 @@ fun AuthPage(state: AuthState, onAction: (AuthAction) -> Unit, modifier: Modifie
 @PreviewLightDark
 @Composable
 private fun Preview() {
-    AppTheme { AuthPage(state = AuthState(), onAction = {}) }
+    AppTheme { AuthPage(state = SettingsState(), onAction = {}) }
 }

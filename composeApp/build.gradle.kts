@@ -48,6 +48,7 @@ kotlin {
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.materialkolor)
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)

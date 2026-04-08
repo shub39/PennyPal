@@ -107,11 +107,11 @@ fun App() {
                             HomePage(state = state, onAction = viewmodel::onAction)
                         }
 
-                        entry<AppRoutes.AnalyticsPage> {
+                        entry<AppRoutes.AnalyticsPage>(metadata = fadeTransitionMetadata()) {
 
                         }
 
-                        entry<AppRoutes.SettingsPage> {
+                        entry<AppRoutes.SettingsPage>(metadata = fadeTransitionMetadata()) {
 
                         }
                     },

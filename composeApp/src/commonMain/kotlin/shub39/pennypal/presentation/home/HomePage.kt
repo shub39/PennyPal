@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -38,7 +39,6 @@ import shub39.pennypal.domain.TransactionType
 import shub39.pennypal.presentation.*
 import shub39.pennypal.presentation.components.CategoryAddSheet
 import shub39.pennypal.presentation.components.TransactionAddSheet
-import androidx.compose.ui.graphics.lerp
 import shub39.pennypal.presentation.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
@@ -51,14 +51,15 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
     // Sheets
     if (showAddTransactionSheet && state.allCategories.isNotEmpty()) {
         TransactionAddSheet(
-            transaction = Transaction(
-                categoryId = state.allCategories.first().id,
-                amount = 10.0,
-                date = Clock.System.now(),
-                note = null,
-                recurrence = Recurrence.NONE,
-                transactionType = TransactionType.EXPENSE,
-            ),
+            transaction =
+                Transaction(
+                    categoryId = state.allCategories.first().id,
+                    amount = 10.0,
+                    date = Clock.System.now(),
+                    note = null,
+                    recurrence = Recurrence.NONE,
+                    transactionType = TransactionType.EXPENSE,
+                ),
             onAddTransaction = { onAction(HomeAction.AddTransaction(it)) },
             categories = state.allCategories,
             onDismissRequest = { showAddTransactionSheet = false },
@@ -67,11 +68,12 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
 
     if (showAddCategorySheet) {
         CategoryAddSheet(
-            category = Category(
-                name = "New Category",
-                colorArgb = CategoryColors.random().toArgb(),
-                categoryIcon = CategoryIcon.entries.random(),
-            ),
+            category =
+                Category(
+                    name = "New Category",
+                    colorArgb = CategoryColors.random().toArgb(),
+                    categoryIcon = CategoryIcon.entries.random(),
+                ),
             onAddCategory = { onAction(HomeAction.AddCategory(it)) },
             onDismissRequest = { showAddCategorySheet = false },
         )
@@ -80,38 +82,34 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
     Surface(modifier = modifier.fillMaxSize()) {
         Box {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                modifier = Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 GreetingSection(name = state.name)
 
-                WalletCard(
-                    totalExpenses = state.totalExpenses,
-                    totalIncome = state.totalIncome
-                )
+                WalletCard(totalExpenses = state.totalExpenses, totalIncome = state.totalIncome)
 
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     RecurrenceSelector(
                         selectedRecurrence = state.selectedRecurrence,
-                        onRecurrenceSelected = { onAction(HomeAction.SelectRecurrence(it)) }
+                        onRecurrenceSelected = { onAction(HomeAction.SelectRecurrence(it)) },
                     )
 
-                    val transactionItems = remember(state.transactions, state.selectedRecurrence) {
-                        state.transactions.filter {
-                            when (state.selectedRecurrence) {
-                                Recurrence.NONE -> true
-                                Recurrence.WEEKLY -> it.recurrence == Recurrence.WEEKLY
-                                Recurrence.MONTHLY -> it.recurrence == Recurrence.MONTHLY
+                    val transactionItems =
+                        remember(state.transactions, state.selectedRecurrence) {
+                            state.transactions.filter {
+                                when (state.selectedRecurrence) {
+                                    Recurrence.NONE -> true
+                                    Recurrence.WEEKLY -> it.recurrence == Recurrence.WEEKLY
+                                    Recurrence.MONTHLY -> it.recurrence == Recurrence.MONTHLY
+                                }
                             }
                         }
-                    }
 
                     TransactionList(
                         transactions = transactionItems,
                         allCategories = state.allCategories,
-                        onDeleteTransaction = { onAction(HomeAction.DeleteTransaction(it)) }
+                        onDeleteTransaction = { onAction(HomeAction.DeleteTransaction(it)) },
                     )
                 }
             }
@@ -127,7 +125,7 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                     showAddTransactionSheet = true
                     fabExpanded = false
                 },
-                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)
+                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
             )
         }
     }
@@ -139,39 +137,39 @@ private fun GreetingSection(name: String, modifier: Modifier = Modifier) {
         Text(text = "Hey, $name", style = MaterialTheme.typography.titleLarge)
         Text(
             text = "Manage your expenses",
-            style = MaterialTheme.typography.bodyLarge.copy(
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            ),
+            style =
+                MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
         )
     }
 }
 
 @Composable
-private fun WalletCard(
-    totalExpenses: Double,
-    totalIncome: Double,
-    modifier: Modifier = Modifier
-) {
+private fun WalletCard(totalExpenses: Double, totalIncome: Double, modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(
-                brush = Brush.linearGradient(
-                    0f to Color(0xffe8d1b2),
-                    0.3f to Color(0xffa0c6aa),
-                    0.7f to Color(0xff6fc0a6),
-                    1f to Color(0xff40b9a1),
-                ),
-                shape = MaterialTheme.shapes.large,
-            )
-            .clip(MaterialTheme.shapes.large)
-    ) {
-        Box(
-            modifier = Modifier.matchParentSize()
+        modifier =
+            modifier
+                .fillMaxWidth()
                 .background(
-                    color = MaterialTheme.colorScheme.background.copy(alpha = 0.2f),
+                    brush =
+                        Brush.linearGradient(
+                            0f to Color(0xffe8d1b2),
+                            0.3f to Color(0xffa0c6aa),
+                            0.7f to Color(0xff6fc0a6),
+                            1f to Color(0xff40b9a1),
+                        ),
                     shape = MaterialTheme.shapes.large,
                 )
+                .clip(MaterialTheme.shapes.large)
+    ) {
+        Box(
+            modifier =
+                Modifier.matchParentSize()
+                    .background(
+                        color = MaterialTheme.colorScheme.background.copy(alpha = 0.2f),
+                        shape = MaterialTheme.shapes.large,
+                    )
         )
 
         Column(modifier = Modifier.padding(16.dp)) {
@@ -204,15 +202,11 @@ private fun WalletStat(label: String, amount: Double) {
     Column {
         Text(
             text = label,
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.Normal
-            ),
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Normal),
         )
         Text(
             text = "₹ ${amount.roundToInt()}",
-            style = MaterialTheme.typography.headlineMedium.copy(
-                fontWeight = FontWeight.Bold
-            ),
+            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
         )
     }
 }
@@ -222,7 +216,7 @@ private fun WalletStat(label: String, amount: Double) {
 private fun RecurrenceSelector(
     selectedRecurrence: Recurrence,
     onRecurrenceSelected: (Recurrence) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(text = "Your expenses", style = MaterialTheme.typography.titleMedium)
@@ -231,11 +225,13 @@ private fun RecurrenceSelector(
                 TonalToggleButton(
                     checked = selectedRecurrence == recurrence,
                     onCheckedChange = { onRecurrenceSelected(recurrence) },
-                    shapes = when (index) {
-                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                        Recurrence.entries.size - 1 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                    },
+                    shapes =
+                        when (index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            Recurrence.entries.size - 1 ->
+                                ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                        },
                     modifier = Modifier.weight(1f),
                 ) {
                     Text(text = recurrence.toDisplayString())
@@ -250,7 +246,7 @@ private fun TransactionList(
     transactions: List<Transaction>,
     allCategories: List<Category>,
     onDeleteTransaction: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (transactions.isEmpty()) {
         Column(
@@ -270,13 +266,11 @@ private fun TransactionList(
             )
         }
     } else {
-        val itemsGroupedByCategory = transactions.groupBy { item ->
-            allCategories.find { it.id == item.categoryId }!!
-        }
+        val itemsGroupedByCategory =
+            transactions.groupBy { item -> allCategories.find { it.id == item.categoryId }!! }
         LazyColumn(
-            modifier = modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+            modifier =
+                modifier.fillMaxWidth().clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
             contentPadding = PaddingValues(top = 8.dp, bottom = 60.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
@@ -285,7 +279,7 @@ private fun TransactionList(
                     CategoryGroup(
                         category = category,
                         transactions = categoryTransactions,
-                        onDeleteTransaction = onDeleteTransaction
+                        onDeleteTransaction = onDeleteTransaction,
                     )
                 }
             }
@@ -297,21 +291,22 @@ private fun TransactionList(
 private fun CategoryGroup(
     category: Category,
     transactions: List<Transaction>,
-    onDeleteTransaction: (Long) -> Unit
+    onDeleteTransaction: (Long) -> Unit,
 ) {
     Column {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    brush = Brush.horizontalGradient(
-                        0f to MaterialTheme.colorScheme.surfaceContainerHighest,
-                        0.7f to Color(category.colorArgb).copy(alpha = 0.5f),
-                        1f to Color(category.colorArgb),
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                )
-                .clip(RoundedCornerShape(16.dp))
+            modifier =
+                Modifier.fillMaxWidth()
+                    .background(
+                        brush =
+                            Brush.horizontalGradient(
+                                0f to MaterialTheme.colorScheme.surfaceContainerHighest,
+                                0.7f to Color(category.colorArgb).copy(alpha = 0.5f),
+                                1f to Color(category.colorArgb),
+                            ),
+                        shape = RoundedCornerShape(16.dp),
+                    )
+                    .clip(RoundedCornerShape(16.dp))
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -322,25 +317,23 @@ private fun CategoryGroup(
                     imageVector = vectorResource(category.categoryIcon.toDrawable()),
                     contentDescription = null,
                 )
-                Text(
-                    text = category.name,
-                    style = MaterialTheme.typography.titleSmall,
-                )
+                Text(text = category.name, style = MaterialTheme.typography.titleSmall)
             }
         }
         Spacer(modifier = Modifier.height(4.dp))
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
             transactions.forEachIndexed { index, item ->
-                val shape = when {
-                    transactions.size == 1 -> detachedItemShape()
-                    index == 0 -> leadingItemShape()
-                    index == transactions.size - 1 -> endItemShape()
-                    else -> middleItemShape()
-                }
+                val shape =
+                    when {
+                        transactions.size == 1 -> detachedItemShape()
+                        index == 0 -> leadingItemShape()
+                        index == transactions.size - 1 -> endItemShape()
+                        else -> middleItemShape()
+                    }
                 TransactionItem(
                     transaction = item,
                     shape = shape,
-                    onClick = { onDeleteTransaction(item.id) }
+                    onClick = { onDeleteTransaction(item.id) },
                 )
             }
         }
@@ -348,68 +341,67 @@ private fun CategoryGroup(
 }
 
 @Composable
-private fun TransactionItem(
-    transaction: Transaction,
-    shape: Shape,
-    onClick: () -> Unit
-) {
+private fun TransactionItem(transaction: Transaction, shape: Shape, onClick: () -> Unit) {
     Card(
         modifier = Modifier,
         onClick = onClick,
         shape = shape,
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor = Color.Transparent,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            ),
     ) {
         Row(
-            modifier = Modifier
-                .background(
-                    brush = when (transaction.transactionType) {
-                        TransactionType.INCOME -> Brush.horizontalGradient(
-                            0f to MaterialTheme.colorScheme.surfaceContainerHighest,
-                            0.7f to MaterialTheme.colorScheme.surfaceContainerHighest,
-                            0.95f to Color(0xFF3A782B),
-                            1f to Color(0xFF3A782B),
-                        )
+            modifier =
+                Modifier.background(
+                        brush =
+                            when (transaction.transactionType) {
+                                TransactionType.INCOME ->
+                                    Brush.horizontalGradient(
+                                        0f to MaterialTheme.colorScheme.surfaceContainerHighest,
+                                        0.7f to MaterialTheme.colorScheme.surfaceContainerHighest,
+                                        0.95f to Color(0xFF3A782B),
+                                        1f to Color(0xFF3A782B),
+                                    )
 
-                        TransactionType.EXPENSE -> Brush.linearGradient(
-                            0f to MaterialTheme.colorScheme.surfaceContainerHighest,
-                            0.7f to MaterialTheme.colorScheme.surfaceContainerHighest,
-                            0.95f to Color(0xFF9E1C25),
-                            1f to Color(0xFF9E1C25),
-                        )
-                    }
-                )
-                .fillMaxWidth()
-                .padding(16.dp),
+                                TransactionType.EXPENSE ->
+                                    Brush.linearGradient(
+                                        0f to MaterialTheme.colorScheme.surfaceContainerHighest,
+                                        0.7f to MaterialTheme.colorScheme.surfaceContainerHighest,
+                                        0.95f to Color(0xFF9E1C25),
+                                        1f to Color(0xFF9E1C25),
+                                    )
+                            }
+                    )
+                    .fillMaxWidth()
+                    .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Column {
                 Text(
-                    text = "${if (transaction.transactionType == TransactionType.INCOME) "+" else "-"}₹ ${transaction.amount.roundToInt()}",
+                    text =
+                        "${if (transaction.transactionType == TransactionType.INCOME) "+" else "-"}₹ ${transaction.amount.roundToInt()}",
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 transaction.note?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.labelMedium,
-                    )
+                    Text(text = it, style = MaterialTheme.typography.labelMedium)
                 }
             }
 
             Text(
-                text = transaction.date
-                    .toLocalDateTime(TimeZone.UTC)
-                    .date
-                    .format(
-                        LocalDate.Format {
-                            day()
-                            char(' ')
-                            monthName(MonthNames.ENGLISH_ABBREVIATED)
-                        }
-                    )
+                text =
+                    transaction.date
+                        .toLocalDateTime(TimeZone.UTC)
+                        .date
+                        .format(
+                            LocalDate.Format {
+                                day()
+                                char(' ')
+                                monthName(MonthNames.ENGLISH_ABBREVIATED)
+                            }
+                        )
             )
         }
     }
@@ -422,7 +414,7 @@ private fun HomeFabMenu(
     onExpandedChange: (Boolean) -> Unit,
     onAddCategory: () -> Unit,
     onAddTransaction: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val color1 = MaterialTheme.colorScheme.secondaryContainer
     val color2 = MaterialTheme.colorScheme.primary
@@ -432,19 +424,18 @@ private fun HomeFabMenu(
             ToggleFloatingActionButton(
                 checked = expanded,
                 onCheckedChange = onExpandedChange,
-                containerColor = { progress ->
-                    lerp(color1, color2, progress)
-                },
-                contentAlignment = Alignment.Center
+                containerColor = { progress -> lerp(color1, color2, progress) },
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = vectorResource(Res.drawable.add),
                     contentDescription = null,
-                    tint = lerp(
-                        MaterialTheme.colorScheme.onSecondaryContainer,
-                        MaterialTheme.colorScheme.onPrimary,
-                        checkedProgress
-                    )
+                    tint =
+                        lerp(
+                            MaterialTheme.colorScheme.onSecondaryContainer,
+                            MaterialTheme.colorScheme.onPrimary,
+                            checkedProgress,
+                        ),
                 )
             }
         },
@@ -496,17 +487,20 @@ private fun Preview() {
 
     AppTheme {
         HomePage(
-            state = HomeState(
-                name = "Shub39",
-                transactions = transactions,
-                totalExpenses = transactions
-                    .filter { it.transactionType == TransactionType.EXPENSE }
-                    .sumOf { it.amount },
-                totalIncome = transactions
-                    .filter { it.transactionType == TransactionType.INCOME }
-                    .sumOf { it.amount },
-                allCategories = categories,
-            ),
+            state =
+                HomeState(
+                    name = "Shub39",
+                    transactions = transactions,
+                    totalExpenses =
+                        transactions
+                            .filter { it.transactionType == TransactionType.EXPENSE }
+                            .sumOf { it.amount },
+                    totalIncome =
+                        transactions
+                            .filter { it.transactionType == TransactionType.INCOME }
+                            .sumOf { it.amount },
+                    allCategories = categories,
+                ),
             onAction = {},
         )
     }

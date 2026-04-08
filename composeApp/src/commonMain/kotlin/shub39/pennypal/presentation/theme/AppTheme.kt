@@ -15,6 +15,6 @@ fun AppTheme(isDark: Boolean = isSystemInDarkTheme(), content: @Composable () ->
         isAmoled = true,
         style = PaletteStyle.Monochrome,
         isDark = isDark,
-        content = content
+        content = content,
     )
 }

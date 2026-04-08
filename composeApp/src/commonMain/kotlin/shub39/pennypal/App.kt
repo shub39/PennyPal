@@ -5,7 +5,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -31,7 +30,7 @@ import shub39.pennypal.presentation.theme.AppTheme
 import shub39.pennypal.viewmodel.HomeViewModel
 
 @Serializable
-sealed interface AppRoutes: NavKey {
+sealed interface AppRoutes : NavKey {
     @Serializable data object HomePage : AppRoutes
 
     @Serializable data object AnalyticsPage : AppRoutes
@@ -57,41 +56,41 @@ fun App() {
         Scaffold(
             bottomBar = {
                 NavigationBar {
-                    listOf(
-                        AppRoutes.HomePage,
-                        AppRoutes.AnalyticsPage,
-                        AppRoutes.SettingsPage
-                    ).forEach { route ->
-                        NavigationBarItem(
-                            selected = globalBackStack.last() == route,
-                            onClick = {
-                                globalBackStack.removeAll { it == route }
-                                globalBackStack.add(route)
-                            },
-                            icon = {
-                                Icon(
-                                    painter = painterResource(
-                                        when (route) {
-                                            AppRoutes.AnalyticsPage -> Res.drawable.analytics
-                                            AppRoutes.HomePage -> Res.drawable.home
-                                            AppRoutes.SettingsPage -> Res.drawable.settings
-                                        }
-                                    ),
-                                    contentDescription = null
-                                )
-                            },
-                            label = {
-                                Text(
-                                    text = when (route) {
-                                        AppRoutes.AnalyticsPage -> "Analytics"
-                                        AppRoutes.HomePage -> "Home"
-                                        AppRoutes.SettingsPage -> "Settings"
-                                    }
-                                )
-                            },
-                            alwaysShowLabel = true
-                        )
-                    }
+                    listOf(AppRoutes.HomePage, AppRoutes.AnalyticsPage, AppRoutes.SettingsPage)
+                        .forEach { route ->
+                            NavigationBarItem(
+                                selected = globalBackStack.last() == route,
+                                onClick = {
+                                    globalBackStack.removeAll { it == route }
+                                    globalBackStack.add(route)
+                                },
+                                icon = {
+                                    Icon(
+                                        painter =
+                                            painterResource(
+                                                when (route) {
+                                                    AppRoutes.AnalyticsPage ->
+                                                        Res.drawable.analytics
+                                                    AppRoutes.HomePage -> Res.drawable.home
+                                                    AppRoutes.SettingsPage -> Res.drawable.settings
+                                                }
+                                            ),
+                                        contentDescription = null,
+                                    )
+                                },
+                                label = {
+                                    Text(
+                                        text =
+                                            when (route) {
+                                                AppRoutes.AnalyticsPage -> "Analytics"
+                                                AppRoutes.HomePage -> "Home"
+                                                AppRoutes.SettingsPage -> "Settings"
+                                            }
+                                    )
+                                },
+                                alwaysShowLabel = true,
+                            )
+                        }
                 }
             }
         ) { padding ->
@@ -107,13 +106,9 @@ fun App() {
                             HomePage(state = state, onAction = viewmodel::onAction)
                         }
 
-                        entry<AppRoutes.AnalyticsPage>(metadata = fadeTransitionMetadata()) {
+                        entry<AppRoutes.AnalyticsPage>(metadata = fadeTransitionMetadata()) {}
 
-                        }
-
-                        entry<AppRoutes.SettingsPage>(metadata = fadeTransitionMetadata()) {
-
-                        }
+                        entry<AppRoutes.SettingsPage>(metadata = fadeTransitionMetadata()) {}
                     },
             )
         }

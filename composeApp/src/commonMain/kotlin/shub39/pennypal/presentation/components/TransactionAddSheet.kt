@@ -152,7 +152,7 @@ fun TransactionAddSheet(
             )
 
             OutlinedTextField(
-                value = newTransaction.note.toString(),
+                value = newTransaction.note ?: "",
                 onValueChange = {
                     newTransaction = newTransaction.copy(note = it.ifBlank { null })
                 },

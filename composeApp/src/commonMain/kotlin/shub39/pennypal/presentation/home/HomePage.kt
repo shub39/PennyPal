@@ -2,7 +2,6 @@ package shub39.pennypal.presentation.home
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -86,7 +85,7 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                     categoryId = state.allCategories.first().id,
                     amount = 10.0,
                     date = Clock.System.now(),
-                    note = "",
+                    note = null,
                     recurrence = Recurrence.NONE,
                     transactionType = TransactionType.EXPENSE,
                 ),
@@ -216,7 +215,9 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                             Recurrence.entries.forEachIndexed { index, recurrence ->
                                 TonalToggleButton(
                                     checked = state.selectedRecurrence == recurrence,
-                                    onCheckedChange = { onAction(HomeAction.SelectRecurrence(recurrence)) },
+                                    onCheckedChange = {
+                                        onAction(HomeAction.SelectRecurrence(recurrence))
+                                    },
                                     shapes =
                                         when (index) {
                                             0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
@@ -237,7 +238,7 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                     val transactionItems =
                         state.transactions.filter {
                             when (state.selectedRecurrence) {
-                                Recurrence.NONE -> it.recurrence == Recurrence.NONE
+                                Recurrence.NONE -> true
                                 Recurrence.WEEKLY -> it.recurrence == Recurrence.WEEKLY
                                 Recurrence.MONTHLY -> it.recurrence == Recurrence.MONTHLY
                             }
@@ -257,7 +258,8 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                             Text(
                                 text = "Add a transaction to get started",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                color =
+                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                             )
                         }
                     } else {
@@ -323,7 +325,9 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
 
                                             Card(
                                                 modifier = Modifier,
-                                                onClick = { onAction(HomeAction.DeleteTransaction(item.id)) },
+                                                onClick = {
+                                                    onAction(HomeAction.DeleteTransaction(item.id))
+                                                },
                                                 shape = shape,
                                                 colors =
                                                     when (item.transactionType) {
@@ -399,8 +403,7 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                                                             .fillMaxWidth()
                                                             .padding(16.dp),
                                                     verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement =
-                                                        Arrangement.SpaceBetween,
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
                                                 ) {
                                                     Column {
                                                         Text(
@@ -470,12 +473,18 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                 modifier = Modifier.align(Alignment.BottomEnd).padding(0.dp),
             ) {
                 FloatingActionButtonMenuItem(
-                    onClick = { showAddCategorySheet = true; fabExpanded = false },
+                    onClick = {
+                        showAddCategorySheet = true
+                        fabExpanded = false
+                    },
                     text = { Text(text = "Add Category") },
                     icon = {},
                 )
                 FloatingActionButtonMenuItem(
-                    onClick = { showAddTransactionSheet = true; fabExpanded = false },
+                    onClick = {
+                        showAddTransactionSheet = true
+                        fabExpanded = false
+                    },
                     text = { Text(text = "Add Transaction") },
                     icon = {},
                 )

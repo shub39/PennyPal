@@ -5,7 +5,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import shub39.pennypal.di.initKoin
 
-class MainApplication: Application() {
+class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 

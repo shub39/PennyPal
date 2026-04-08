@@ -43,7 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -60,6 +60,7 @@ import pennypal.composeapp.generated.resources.edit
 import shub39.pennypal.domain.Category
 import shub39.pennypal.domain.CategoryIcon
 import shub39.pennypal.domain.Recurrence
+import shub39.pennypal.domain.Recurrence.Companion.toDisplayString
 import shub39.pennypal.domain.Transaction
 import shub39.pennypal.domain.TransactionType
 import shub39.pennypal.domain.TransactionType.Companion.toDisplayString
@@ -116,148 +117,166 @@ fun TransactionAddSheet(
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     ) {
         Column(
-            modifier = Modifier
-                .padding(16.dp)
+            modifier = Modifier.padding(16.dp).clip(MaterialTheme.shapes.medium),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .clip(MaterialTheme.shapes.medium),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+            Box(
+                modifier =
+                    Modifier.size(50.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            shape = MaterialShapes.SoftBurst.toShape(),
+                        ),
+                contentAlignment = Alignment.Center,
             ) {
-                Box(
-                    modifier =
-                        Modifier.size(50.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.surfaceVariant,
-                                shape = MaterialShapes.SoftBurst.toShape(),
-                            ),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.add),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-
-                Text(text = "Add New Transaction", style = MaterialTheme.typography.titleLarge)
-
-                OutlinedTextField(
-                    value = newTransaction.amount.toString(),
-                    onValueChange = {
-                        it.toDoubleOrNull()?.let { amt ->
-                            newTransaction = newTransaction.copy(amount = amt)
-                        }
-                    },
-                    label = { Text(text = "Add Amount") },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
-                    )
+                Icon(
+                    imageVector = vectorResource(Res.drawable.add),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
                 )
+            }
 
-                OutlinedTextField(
-                    value = newTransaction.note.toString(),
-                    onValueChange = { newTransaction = newTransaction.copy(note = it) },
-                    label = { Text(text = "Add Note") },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium,
-                )
+            Text(text = "Add New Transaction", style = MaterialTheme.typography.titleLarge)
 
-                Column {
-                    Card(shape = leadingItemShape()) {
-                        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                            Text(text = "Select Category")
-                            Spacer(modifier = Modifier.height(8.dp))
-                            FlowRow(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                                categories.forEach { category ->
-                                    ToggleButton(
-                                        checked = category.id == newTransaction.categoryId,
-                                        onCheckedChange = {
-                                            newTransaction =
-                                                newTransaction.copy(categoryId = category.id)
-                                        },
-                                    ) {
-                                        Text(text = category.name)
-                                    }
+            OutlinedTextField(
+                value = newTransaction.amount.toString(),
+                onValueChange = {
+                    it.toDoubleOrNull()?.let { amt ->
+                        newTransaction = newTransaction.copy(amount = amt)
+                    }
+                },
+                label = { Text(text = "Add Amount") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            )
+
+            OutlinedTextField(
+                value = newTransaction.note.toString(),
+                onValueChange = {
+                    newTransaction = newTransaction.copy(note = it.ifBlank { null })
+                },
+                label = { Text(text = "Add Note") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+            )
+
+            Column(
+                modifier =
+                    Modifier.weight(1f)
+                        .verticalScroll(rememberScrollState())
+                        .clip(MaterialTheme.shapes.medium)
+            ) {
+                Card(shape = leadingItemShape()) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                        Text(text = "Select Category")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                            categories.forEach { category ->
+                                ToggleButton(
+                                    checked = category.id == newTransaction.categoryId,
+                                    onCheckedChange = {
+                                        newTransaction =
+                                            newTransaction.copy(categoryId = category.id)
+                                    },
+                                ) {
+                                    Text(text = category.name)
                                 }
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Card(shape = middleItemShape()) {
-                        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                            Text(text = "Select Transaction Type")
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                                TransactionType.entries.forEach { type ->
-                                    ToggleButton(
-                                        checked = type == newTransaction.transactionType,
-                                        onCheckedChange = {
-                                            newTransaction =
-                                                newTransaction.copy(transactionType = type)
-                                        },
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        Text(text = type.toDisplayString())
-                                    }
+                }
+                Spacer(modifier = Modifier.height(2.dp))
+                Card(shape = middleItemShape()) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                        Text(text = "Select Transaction Type")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                            TransactionType.entries.forEach { type ->
+                                ToggleButton(
+                                    checked = type == newTransaction.transactionType,
+                                    onCheckedChange = {
+                                        newTransaction = newTransaction.copy(transactionType = type)
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                ) {
+                                    Text(text = type.toDisplayString())
                                 }
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Card(shape = endItemShape()) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Column {
-                                Text(text = "Select Date")
-                                Text(
-                                    text =
-                                        newTransaction.date
-                                            .toLocalDateTime(TimeZone.UTC)
-                                            .date
-                                            .format(
-                                                LocalDate.Format {
-                                                    day()
-                                                    char(' ')
-                                                    monthName(MonthNames.ENGLISH_FULL)
-                                                    char(' ')
-                                                    year()
-                                                }
-                                            ),
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
-                            }
-                            IconButton(onClick = { showDatePicker = true }) {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.edit),
-                                    contentDescription = null,
-                                )
+                }
+                Spacer(modifier = Modifier.height(2.dp))
+                Card(shape = middleItemShape()) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                        Text(text = "Select Recurrence")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Recurrence.entries.forEach { recurrence ->
+                                ToggleButton(
+                                    checked = recurrence == newTransaction.recurrence,
+                                    onCheckedChange = {
+                                        newTransaction =
+                                            newTransaction.copy(recurrence = recurrence)
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                ) {
+                                    Text(text = recurrence.toDisplayString())
+                                }
                             }
                         }
                     }
                 }
-
-                Button(
-                    onClick = {
-                        onAddTransaction(newTransaction)
-                        onDismissRequest()
-                    },
-                    enabled = newTransaction.amount >= 0,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(text = "Add Transaction")
+                Spacer(modifier = Modifier.height(2.dp))
+                Card(shape = endItemShape()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Column {
+                            Text(text = "Select Date")
+                            Text(
+                                text =
+                                    newTransaction.date
+                                        .toLocalDateTime(TimeZone.UTC)
+                                        .date
+                                        .format(
+                                            LocalDate.Format {
+                                                day()
+                                                char(' ')
+                                                monthName(MonthNames.ENGLISH_FULL)
+                                                char(' ')
+                                                year()
+                                            }
+                                        ),
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                        }
+                        IconButton(onClick = { showDatePicker = true }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.edit),
+                                contentDescription = null,
+                            )
+                        }
+                    }
                 }
+            }
+
+            Button(
+                onClick = {
+                    onAddTransaction(newTransaction)
+                    onDismissRequest()
+                },
+                enabled = newTransaction.amount >= 0,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(text = "Add Transaction")
             }
         }
     }
 }
 
-@PreviewLightDark
+@Preview
 @Composable
 private fun Preview() {
     val categories by remember {

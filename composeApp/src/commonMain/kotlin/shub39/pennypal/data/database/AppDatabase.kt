@@ -7,17 +7,15 @@ import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [
-        CategoryEntity::class,
-        TransactionEntity::class
-    ],
+    entities = [CategoryEntity::class, TransactionEntity::class],
     version = 1,
-    exportSchema = false
+    exportSchema = false,
 )
 @TypeConverters(Converters::class)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
+
     abstract fun transactionDao(): TransactionDao
 
     companion object {

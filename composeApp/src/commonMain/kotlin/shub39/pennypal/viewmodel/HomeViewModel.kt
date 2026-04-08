@@ -21,22 +21,21 @@ import shub39.pennypal.presentation.home.HomeAction
 import shub39.pennypal.presentation.home.HomeState
 
 @KoinViewModel
-class HomeViewModel(
-    private val repository: AppRepository
-) : ViewModel() {
+class HomeViewModel(private val repository: AppRepository) : ViewModel() {
     private val _state = MutableStateFlow(HomeState())
-    val state = _state.asStateFlow()
-        .onStart {
-            collectDatabase()
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = HomeState()
-        )
+    val state =
+        _state
+            .asStateFlow()
+            .onStart { collectDatabase() }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = HomeState(),
+            )
 
     private fun collectDatabase() {
-        repository.getCategories()
+        repository
+            .getCategories()
             .onEach { categories ->
                 if (categories.isEmpty()) {
                     seedDefaultCategories()
@@ -44,42 +43,84 @@ class HomeViewModel(
             }
             .launchIn(viewModelScope)
 
-        combine(
-            repository.getTransactions(),
-            repository.getCategories()
-        ) { transactions, categories ->
-            val totalIncome = transactions
-                .filter { it.transactionType == TransactionType.INCOME }
-                .sumOf { it.amount }
-            val totalExpenses = transactions
-                .filter { it.transactionType == TransactionType.EXPENSE }
-                .sumOf { it.amount }
+        combine(repository.getTransactions(), repository.getCategories()) { transactions, categories
+                ->
+                val totalIncome =
+                    transactions
+                        .filter { it.transactionType == TransactionType.INCOME }
+                        .sumOf { it.amount }
+                val totalExpenses =
+                    transactions
+                        .filter { it.transactionType == TransactionType.EXPENSE }
+                        .sumOf { it.amount }
 
-            _state.update {
-                it.copy(
-                    transactions = transactions,
-                    allCategories = categories,
-                    totalIncome = totalIncome,
-                    totalExpenses = totalExpenses
-                )
+                _state.update {
+                    it.copy(
+                        transactions = transactions,
+                        allCategories = categories,
+                        totalIncome = totalIncome,
+                        totalExpenses = totalExpenses,
+                    )
+                }
             }
-        }.launchIn(viewModelScope)
+            .launchIn(viewModelScope)
     }
 
     private fun seedDefaultCategories() {
         viewModelScope.launch {
-            val defaultCategories = listOf(
-                Category(name = "Food", colorArgb = 0xFFFF5722.toInt(), categoryIcon = CategoryIcon.FOOD),
-                Category(name = "Transport", colorArgb = 0xFF03A9F4.toInt(), categoryIcon = CategoryIcon.TRANSPORT),
-                Category(name = "Shopping", colorArgb = 0xFFE91E63.toInt(), categoryIcon = CategoryIcon.SHOPPING),
-                Category(name = "Housing", colorArgb = 0xFF9C27B0.toInt(), categoryIcon = CategoryIcon.HOUSING),
-                Category(name = "Bills", colorArgb = 0xFFFFC107.toInt(), categoryIcon = CategoryIcon.BILLS),
-                Category(name = "Entertainment", colorArgb = 0xFF673AB7.toInt(), categoryIcon = CategoryIcon.ENTERTAINMENT),
-                Category(name = "Health", colorArgb = 0xFF4CAF50.toInt(), categoryIcon = CategoryIcon.HEALTH),
-                Category(name = "Education", colorArgb = 0xFF2196F3.toInt(), categoryIcon = CategoryIcon.EDUCATION),
-                Category(name = "Travel", colorArgb = 0xFF3F51B5.toInt(), categoryIcon = CategoryIcon.TRAVEL),
-                Category(name = "Misc", colorArgb = 0xFF607D8B.toInt(), categoryIcon = CategoryIcon.MISC)
-            )
+            val defaultCategories =
+                listOf(
+                    Category(
+                        name = "Food",
+                        colorArgb = 0xFFFF5722.toInt(),
+                        categoryIcon = CategoryIcon.FOOD,
+                    ),
+                    Category(
+                        name = "Transport",
+                        colorArgb = 0xFF03A9F4.toInt(),
+                        categoryIcon = CategoryIcon.TRANSPORT,
+                    ),
+                    Category(
+                        name = "Shopping",
+                        colorArgb = 0xFFE91E63.toInt(),
+                        categoryIcon = CategoryIcon.SHOPPING,
+                    ),
+                    Category(
+                        name = "Housing",
+                        colorArgb = 0xFF9C27B0.toInt(),
+                        categoryIcon = CategoryIcon.HOUSING,
+                    ),
+                    Category(
+                        name = "Bills",
+                        colorArgb = 0xFFFFC107.toInt(),
+                        categoryIcon = CategoryIcon.BILLS,
+                    ),
+                    Category(
+                        name = "Entertainment",
+                        colorArgb = 0xFF673AB7.toInt(),
+                        categoryIcon = CategoryIcon.ENTERTAINMENT,
+                    ),
+                    Category(
+                        name = "Health",
+                        colorArgb = 0xFF4CAF50.toInt(),
+                        categoryIcon = CategoryIcon.HEALTH,
+                    ),
+                    Category(
+                        name = "Education",
+                        colorArgb = 0xFF2196F3.toInt(),
+                        categoryIcon = CategoryIcon.EDUCATION,
+                    ),
+                    Category(
+                        name = "Travel",
+                        colorArgb = 0xFF3F51B5.toInt(),
+                        categoryIcon = CategoryIcon.TRAVEL,
+                    ),
+                    Category(
+                        name = "Misc",
+                        colorArgb = 0xFF607D8B.toInt(),
+                        categoryIcon = CategoryIcon.MISC,
+                    ),
+                )
             defaultCategories.forEach { repository.upsertCategory(it) }
         }
     }

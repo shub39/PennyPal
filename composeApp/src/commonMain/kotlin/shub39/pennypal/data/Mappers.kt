@@ -6,21 +6,11 @@ import shub39.pennypal.domain.Category
 import shub39.pennypal.domain.Transaction
 
 fun CategoryEntity.toDomain(): Category {
-    return Category(
-        id = id,
-        name = name,
-        colorArgb = colorArgb,
-        categoryIcon = categoryIcon
-    )
+    return Category(id = id, name = name, colorArgb = colorArgb, categoryIcon = categoryIcon)
 }
 
 fun Category.toEntity(): CategoryEntity {
-    return CategoryEntity(
-        id = id,
-        name = name,
-        colorArgb = colorArgb,
-        categoryIcon = categoryIcon
-    )
+    return CategoryEntity(id = id, name = name, colorArgb = colorArgb, categoryIcon = categoryIcon)
 }
 
 fun TransactionEntity.toDomain(): Transaction {
@@ -31,7 +21,7 @@ fun TransactionEntity.toDomain(): Transaction {
         date = date,
         note = note,
         recurrence = recurrence,
-        transactionType = transactionType
+        transactionType = transactionType,
     )
 }
 
@@ -43,6 +33,6 @@ fun Transaction.toEntity(): TransactionEntity {
         date = date,
         note = note,
         recurrence = recurrence,
-        transactionType = transactionType
+        transactionType = transactionType,
     )
 }

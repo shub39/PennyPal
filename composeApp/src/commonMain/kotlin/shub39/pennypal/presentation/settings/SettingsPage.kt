@@ -24,7 +24,11 @@ import androidx.compose.ui.unit.dp
 import shub39.pennypal.presentation.theme.AppTheme
 
 @Composable
-fun AuthPage(state: SettingsState, onAction: (SettingsAction) -> Unit, modifier: Modifier = Modifier) {
+fun AuthPage(
+    state: SettingsState,
+    onAction: (SettingsAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Scaffold(modifier = modifier) { paddingValues ->
         Box(
             modifier = Modifier.fillMaxSize().padding(paddingValues),

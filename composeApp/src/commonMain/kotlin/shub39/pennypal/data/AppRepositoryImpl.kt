@@ -12,7 +12,7 @@ import shub39.pennypal.domain.Transaction
 @Single(binds = [AppRepository::class])
 class AppRepositoryImpl(
     private val transactionDao: TransactionDao,
-    private val categoryDao: CategoryDao
+    private val categoryDao: CategoryDao,
 ) : AppRepository {
 
     override fun getTransactions(): Flow<List<Transaction>> {
@@ -22,9 +22,7 @@ class AppRepositoryImpl(
     }
 
     override fun getCategories(): Flow<List<Category>> {
-        return categoryDao.getAllCategories().map { entities ->
-            entities.map { it.toDomain() }
-        }
+        return categoryDao.getAllCategories().map { entities -> entities.map { it.toDomain() } }
     }
 
     override suspend fun upsertTransaction(transaction: Transaction) {

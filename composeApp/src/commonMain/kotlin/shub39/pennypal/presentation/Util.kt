@@ -69,7 +69,7 @@ val CategoryColors =
 fun fadeTransitionMetadata(durationMillis: Int = 500): Map<String, Any> = metadata {
     put(NavDisplay.TransitionKey) {
         fadeIn(animationSpec = tween(durationMillis)) togetherWith
-                ExitTransition.KeepUntilTransitionsFinished
+            ExitTransition.KeepUntilTransitionsFinished
     }
     put(NavDisplay.PopTransitionKey) {
         EnterTransition.None togetherWith fadeOut(animationSpec = tween(durationMillis))
@@ -88,11 +88,11 @@ fun verticalTransitionMetadata(durationMillis: Int = 500): Map<String, Any> = me
     }
     put(NavDisplay.PopTransitionKey) {
         EnterTransition.None togetherWith
-                slideOutVertically(targetOffsetY = { it }, animationSpec = tween(durationMillis))
+            slideOutVertically(targetOffsetY = { it }, animationSpec = tween(durationMillis))
     }
     put(NavDisplay.PredictivePopTransitionKey) {
         EnterTransition.None togetherWith
-                slideOutVertically(targetOffsetY = { it }, animationSpec = tween(durationMillis))
+            slideOutVertically(targetOffsetY = { it }, animationSpec = tween(durationMillis))
     }
 }
 
@@ -105,10 +105,10 @@ fun horizontalTransitionMetadata(durationMillis: Int = 500): Map<String, Any> = 
     }
     put(NavDisplay.PopTransitionKey) {
         EnterTransition.None togetherWith
-                slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(durationMillis))
+            slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(durationMillis))
     }
     put(NavDisplay.PredictivePopTransitionKey) {
         EnterTransition.None togetherWith
-                slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(durationMillis))
+            slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(durationMillis))
     }
 }

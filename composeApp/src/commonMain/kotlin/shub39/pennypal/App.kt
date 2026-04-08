@@ -21,14 +21,11 @@ import shub39.pennypal.viewmodel.HomeViewModel
 
 @Serializable
 sealed interface AppRoutes {
-    @Serializable
-    data object HomePage : NavKey
+    @Serializable data object HomePage : NavKey
 
-    @Serializable
-    data object AnalyticsPage : NavKey
+    @Serializable data object AnalyticsPage : NavKey
 
-    @Serializable
-    data object SettingsPage : NavKey
+    @Serializable data object SettingsPage : NavKey
 }
 
 val appConfig = SavedStateConfiguration {
@@ -50,17 +47,15 @@ fun App() {
             NavDisplay(
                 modifier = Modifier.padding(padding),
                 backStack = globalBackStack,
-                entryProvider = entryProvider {
-                    entry<AppRoutes.HomePage>(metadata = fadeTransitionMetadata()) {
-                        val viewmodel = koinViewModel<HomeViewModel>()
-                        val state by viewmodel.state.collectAsStateWithLifecycle()
+                entryProvider =
+                    entryProvider {
+                        entry<AppRoutes.HomePage>(metadata = fadeTransitionMetadata()) {
+                            val viewmodel = koinViewModel<HomeViewModel>()
+                            val state by viewmodel.state.collectAsStateWithLifecycle()
 
-                        HomePage(
-                            state = state,
-                            onAction = viewmodel::onAction,
-                        )
-                    }
-                }
+                            HomePage(state = state, onAction = viewmodel::onAction)
+                        }
+                    },
             )
         }
     }

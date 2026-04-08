@@ -4,7 +4,5 @@ import org.koin.dsl.KoinAppDeclaration
 import org.koin.plugin.module.dsl.startKoin
 
 fun initKoin(config: KoinAppDeclaration? = null) {
-    startKoin<Modules> {
-        config?.invoke(this)
-    }
+    startKoin<Modules> { config?.invoke(this) }
 }

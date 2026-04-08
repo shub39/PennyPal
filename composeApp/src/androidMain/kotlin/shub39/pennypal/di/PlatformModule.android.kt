@@ -12,10 +12,7 @@ actual class PlatformModules {
     @Single
     fun provideDatabase(context: Context): AppDatabase {
         val dbFile = context.getDatabasePath(AppDatabase.DATABASE_NAME)
-        return Room.databaseBuilder<AppDatabase>(
-            context = context,
-            name = dbFile.absolutePath
-        )
+        return Room.databaseBuilder<AppDatabase>(context = context, name = dbFile.absolutePath)
             .setDriver(BundledSQLiteDriver())
             .build()
     }

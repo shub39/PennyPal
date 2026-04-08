@@ -1,10 +1,10 @@
 package shub39.pennypal.data.database
 
 import androidx.room.TypeConverter
+import kotlin.time.Instant
 import shub39.pennypal.domain.CategoryIcon
 import shub39.pennypal.domain.Recurrence
 import shub39.pennypal.domain.TransactionType
-import kotlin.time.Instant
 
 class Converters {
     @TypeConverter

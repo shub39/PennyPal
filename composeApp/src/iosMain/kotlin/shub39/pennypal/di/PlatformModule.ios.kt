@@ -12,9 +12,7 @@ actual class PlatformModules {
     @Single
     fun provideDatabase(): AppDatabase {
         val dbFile = NSHomeDirectory() + "/${AppDatabase.DATABASE_NAME}"
-        return Room.databaseBuilder<AppDatabase>(
-            name = dbFile,
-        )
+        return Room.databaseBuilder<AppDatabase>(name = dbFile)
             .setDriver(BundledSQLiteDriver())
             .build()
     }

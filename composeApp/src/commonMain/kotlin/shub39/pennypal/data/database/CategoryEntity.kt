@@ -6,8 +6,7 @@ import shub39.pennypal.domain.CategoryIcon
 
 @Entity(tableName = "categories")
 data class CategoryEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val colorArgb: Int,
     val categoryIcon: CategoryIcon,

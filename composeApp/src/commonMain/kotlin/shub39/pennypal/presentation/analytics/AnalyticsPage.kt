@@ -182,29 +182,7 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
                             )
                         }
                     }
-                } else {
-                    item {
-                        Column(
-                            modifier = modifier.fillMaxWidth().padding(top = 80.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            Text(
-                                text = "No Analytics available",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                            Text(
-                                text = "Add more data to continue",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color =
-                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                            )
-                        }
-                    }
-                }
 
-                if (state.incomeVsExpenseData.isNotEmpty()) {
                     item {
                         val incomeVsExpenseData =
                             remember(state.incomeVsExpenseData) {
@@ -258,11 +236,9 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
                             )
                         }
                     }
-                }
 
-                item { Spacer(modifier = Modifier.height(16.dp)) }
+                    item { Spacer(modifier = Modifier.height(16.dp)) }
 
-                if (state.incomePieChartData.isNotEmpty()) {
                     item {
                         var incomePieChart by
                             remember(state.incomePieChartData) {
@@ -306,8 +282,6 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
                             )
                         }
                     }
-                }
-                if (state.expensePieChartData.isNotEmpty()) {
                     item {
                         var expensePieChart by
                             remember(state.expensePieChartData) {
@@ -348,6 +322,26 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
                                             pie.copy(selected = pieIndex == mapIndex)
                                         }
                                 },
+                            )
+                        }
+                    }
+                } else {
+                    item {
+                        Column(
+                            modifier = modifier.fillMaxWidth().padding(top = 80.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Text(
+                                text = "No Analytics available",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            Text(
+                                text = "Add more data to continue",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color =
+                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                             )
                         }
                     }

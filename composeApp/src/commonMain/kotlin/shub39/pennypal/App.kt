@@ -1,5 +1,6 @@
 package shub39.pennypal
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -23,12 +24,15 @@ import pennypal.composeapp.generated.resources.Res
 import pennypal.composeapp.generated.resources.analytics
 import pennypal.composeapp.generated.resources.home
 import pennypal.composeapp.generated.resources.settings
+import shub39.pennypal.domain.AppTheme as Theme
 import shub39.pennypal.presentation.analytics.AnalyticsPage
 import shub39.pennypal.presentation.fadeTransitionMetadata
 import shub39.pennypal.presentation.home.HomePage
+import shub39.pennypal.presentation.settings.SettingsPage
 import shub39.pennypal.presentation.theme.AppTheme
 import shub39.pennypal.viewmodel.AnalyticsViewModel
 import shub39.pennypal.viewmodel.HomeViewModel
+import shub39.pennypal.viewmodel.SettingsViewModel
 
 @Serializable
 sealed interface AppRoutes : NavKey {
@@ -51,7 +55,17 @@ val appConfig = SavedStateConfiguration {
 
 @Composable
 fun App() {
-    AppTheme {
+    var userName by remember { mutableStateOf("User") }
+    var appTheme by remember { mutableStateOf(Theme.SYSTEM) }
+
+    val isDark =
+        when (appTheme) {
+            Theme.LIGHT -> false
+            Theme.DARK -> true
+            Theme.SYSTEM -> isSystemInDarkTheme()
+        }
+
+    AppTheme(isDark = isDark) {
         val globalBackStack = rememberNavBackStack(appConfig, AppRoutes.HomePage)
 
         Scaffold(
@@ -72,6 +86,7 @@ fun App() {
                                                 when (route) {
                                                     AppRoutes.AnalyticsPage ->
                                                         Res.drawable.analytics
+
                                                     AppRoutes.HomePage -> Res.drawable.home
                                                     AppRoutes.SettingsPage -> Res.drawable.settings
                                                 }
@@ -104,7 +119,11 @@ fun App() {
                             val viewmodel = koinViewModel<HomeViewModel>()
                             val state by viewmodel.state.collectAsStateWithLifecycle()
 
-                            HomePage(state = state, onAction = viewmodel::onAction)
+                            HomePage(
+                                userName = userName,
+                                state = state,
+                                onAction = viewmodel::onAction,
+                            )
                         }
 
                         entry<AppRoutes.AnalyticsPage>(metadata = fadeTransitionMetadata()) {
@@ -114,7 +133,19 @@ fun App() {
                             AnalyticsPage(state = state)
                         }
 
-                        entry<AppRoutes.SettingsPage>(metadata = fadeTransitionMetadata()) {}
+                        entry<AppRoutes.SettingsPage>(metadata = fadeTransitionMetadata()) {
+                            val viewModel = koinViewModel<SettingsViewModel>()
+                            val isDataEmpty by viewModel.isDataEmpty.collectAsStateWithLifecycle()
+
+                            SettingsPage(
+                                userName = userName,
+                                onChangeUserName = { userName = it },
+                                appTheme = appTheme,
+                                onChangeAppTheme = { appTheme = it },
+                                onDeleteData = viewModel::onDeleteData,
+                                isDataEmpty = isDataEmpty,
+                            )
+                        }
                     },
             )
         }

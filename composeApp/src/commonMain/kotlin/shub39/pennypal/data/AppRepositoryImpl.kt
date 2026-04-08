@@ -40,4 +40,9 @@ class AppRepositoryImpl(
     override suspend fun deleteCategory(categoryId: Long) {
         categoryDao.deleteCategoryById(categoryId)
     }
+
+    override suspend fun deleteAllData() {
+        transactionDao.deleteAllTransactions()
+        categoryDao.deleteAllCategories()
+    }
 }

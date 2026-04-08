@@ -14,4 +14,6 @@ interface CategoryDao {
     suspend fun insertCategory(category: CategoryEntity)
 
     @Query("DELETE FROM categories WHERE id = :id") suspend fun deleteCategoryById(id: Long)
+
+    @Query("DELETE FROM categories") suspend fun deleteAllCategories()
 }

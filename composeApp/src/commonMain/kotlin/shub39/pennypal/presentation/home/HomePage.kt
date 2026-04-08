@@ -44,7 +44,12 @@ import shub39.pennypal.presentation.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifier = Modifier) {
+fun HomePage(
+    userName: String,
+    state: HomeState,
+    onAction: (HomeAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     var fabExpanded by remember { mutableStateOf(false) }
     var showAddCategorySheet by remember { mutableStateOf(false) }
     var showAddTransactionSheet by remember { mutableStateOf(false) }
@@ -86,7 +91,7 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                 modifier = Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
-                GreetingSection(name = state.name)
+                GreetingSection(name = userName)
 
                 WalletCard(totalExpenses = state.totalExpenses, totalIncome = state.totalIncome)
 
@@ -490,9 +495,9 @@ private fun Preview() {
 
     AppTheme {
         HomePage(
+            userName = "Shub39",
             state =
                 HomeState(
-                    name = "Shub39",
                     transactions = transactions,
                     totalExpenses =
                         transactions

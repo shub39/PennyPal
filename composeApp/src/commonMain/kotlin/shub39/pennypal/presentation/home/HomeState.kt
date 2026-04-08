@@ -9,7 +9,6 @@ import shub39.pennypal.domain.Transaction
 @Stable
 @Immutable
 data class HomeState(
-    val name: String = "",
     val transactions: List<Transaction> = emptyList(),
     val totalExpenses: Double = 0.0,
     val totalIncome: Double = 0.0,

@@ -14,4 +14,6 @@ interface AppRepository {
     suspend fun deleteTransaction(transactionId: Long)
 
     suspend fun deleteCategory(categoryId: Long)
+
+    suspend fun deleteAllData()
 }

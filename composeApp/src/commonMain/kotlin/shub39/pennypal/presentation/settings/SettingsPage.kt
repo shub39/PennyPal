@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -27,6 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.vectorResource
@@ -49,9 +53,11 @@ fun SettingsPage(
     appTheme: AppTheme,
     onChangeAppTheme: (AppTheme) -> Unit,
     onDeleteData: () -> Unit,
+    isDataEmpty: Boolean,
     modifier: Modifier = Modifier,
 ) {
     var newUserName by remember { mutableStateOf(userName) }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Surface(modifier = modifier) {
         Column(
@@ -68,9 +74,23 @@ fun SettingsPage(
                     placeholder = { Text(text = "Ex. John Doe") },
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium,
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions =
+                        KeyboardActions(
+                            onDone = {
+                                if (newUserName.isNotBlank() && newUserName != userName) {
+                                    onChangeUserName(newUserName)
+                                    keyboardController?.hide()
+                                }
+                            }
+                        ),
                 )
                 Button(
-                    onClick = { onChangeUserName(newUserName) },
+                    onClick = {
+                        onChangeUserName(newUserName)
+                        keyboardController?.hide()
+                    },
                     enabled = newUserName.isNotBlank() && newUserName != userName,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
@@ -153,7 +173,11 @@ fun SettingsPage(
                                 .background(listItemColors().containerColor)
                                 .padding(start = 52.dp, end = 16.dp, bottom = 8.dp),
                     ) {
-                        Button(onClick = onDeleteData, modifier = Modifier.fillMaxWidth()) {
+                        Button(
+                            onClick = onDeleteData,
+                            enabled = !isDataEmpty,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
                             Text(text = "Delete")
                         }
                     }
@@ -171,6 +195,7 @@ private fun Preview() {
             appTheme = AppTheme.DARK,
             onChangeAppTheme = {},
             onDeleteData = {},
+            isDataEmpty = false,
             userName = "User",
             onChangeUserName = {},
         )

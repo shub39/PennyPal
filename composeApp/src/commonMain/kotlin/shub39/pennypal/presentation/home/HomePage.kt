@@ -18,6 +18,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
@@ -52,25 +54,60 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.vectorResource
 import pennypal.composeapp.generated.resources.Res
 import pennypal.composeapp.generated.resources.add
-import pennypal.composeapp.generated.resources.edit
 import pennypal.composeapp.generated.resources.wallet
 import shub39.pennypal.domain.Category
 import shub39.pennypal.domain.CategoryIcon
 import shub39.pennypal.domain.CategoryIcon.Companion.toDrawable
-import shub39.pennypal.domain.Income
 import shub39.pennypal.domain.Recurrence
 import shub39.pennypal.domain.Recurrence.Companion.toDisplayString
 import shub39.pennypal.domain.Transaction
+import shub39.pennypal.domain.TransactionType
+import shub39.pennypal.presentation.CategoryColors
+import shub39.pennypal.presentation.components.CategoryAddSheet
+import shub39.pennypal.presentation.components.TransactionAddSheet
 import shub39.pennypal.presentation.detachedItemShape
 import shub39.pennypal.presentation.endItemShape
 import shub39.pennypal.presentation.leadingItemShape
 import shub39.pennypal.presentation.middleItemShape
 import shub39.pennypal.presentation.theme.AppTheme
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifier = Modifier) {
     var fabExpanded by remember { mutableStateOf(false) }
+
+    var showAddCategorySheet by remember { mutableStateOf(false) }
+    var showAddTransactionSheet by remember { mutableStateOf(false) }
+
+    if (showAddTransactionSheet && state.allCategories.isNotEmpty()) {
+        TransactionAddSheet(
+            transaction =
+                Transaction(
+                    categoryId = state.allCategories.first().id,
+                    amount = 10.0,
+                    date = Clock.System.now(),
+                    note = "",
+                    recurrence = Recurrence.NONE,
+                    transactionType = TransactionType.EXPENSE,
+                ),
+            onAddTransaction = { onAction(HomeAction.AddTransaction(it)) },
+            categories = state.allCategories,
+            onDismissRequest = { showAddTransactionSheet = false },
+        )
+    }
+
+    if (showAddCategorySheet) {
+        CategoryAddSheet(
+            category =
+                Category(
+                    name = "New Category",
+                    colorArgb = CategoryColors.random().toArgb(),
+                    categoryIcon = CategoryIcon.entries.random(),
+                ),
+            onAddCategory = { onAction(HomeAction.AddCategory(it)) },
+            onDismissRequest = { showAddCategorySheet = true },
+        )
+    }
 
     Surface(modifier = modifier.fillMaxSize()) {
         Box {
@@ -117,50 +154,36 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                     )
 
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.wallet),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Your Wallet",
-                                    style = MaterialTheme.typography.titleMedium,
-                                )
-                            }
-
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
-                                imageVector = vectorResource(Res.drawable.edit),
+                                imageVector = vectorResource(Res.drawable.wallet),
                                 contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface,
                             )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = "Your Wallet", style = MaterialTheme.typography.titleMedium)
                         }
 
                         Spacer(modifier = Modifier.height(32.dp))
 
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.Bottom,
+                            verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Column {
                                 Text(
-                                    text = "Balance Left",
+                                    text = "Total Expenses",
                                     style =
                                         MaterialTheme.typography.labelMedium.copy(
                                             fontWeight = FontWeight.Normal
                                         ),
                                 )
                                 Text(
-                                    text = "₹ ${state.outstandingBalance.roundToInt()}",
+                                    text = "₹ ${state.totalExpenses.roundToInt()}",
                                     style =
                                         MaterialTheme.typography.headlineMedium.copy(
-                                            fontWeight = FontWeight.Black
+                                            fontWeight = FontWeight.Bold
                                         ),
                                 )
                             }
@@ -200,6 +223,7 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                                             0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
                                             Recurrence.entries.size - 1 ->
                                                 ButtonGroupDefaults.connectedTrailingButtonShapes()
+
                                             else ->
                                                 ButtonGroupDefaults.connectedMiddleButtonShapes()
                                         },
@@ -278,15 +302,83 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                                                 else -> middleItemShape()
                                             }
 
-                                        Card(modifier = Modifier, shape = shape) {
+                                        Card(
+                                            modifier = Modifier,
+                                            shape = shape,
+                                            colors =
+                                                when (item.transactionType) {
+                                                    TransactionType.INCOME ->
+                                                        CardDefaults.cardColors(
+                                                            containerColor = Color.Transparent,
+                                                            contentColor =
+                                                                MaterialTheme.colorScheme
+                                                                    .onPrimaryContainer,
+                                                        )
+
+                                                    TransactionType.EXPENSE ->
+                                                        CardDefaults.cardColors(
+                                                            containerColor = Color.Transparent,
+                                                            contentColor =
+                                                                MaterialTheme.colorScheme
+                                                                    .onSecondaryContainer,
+                                                        )
+                                                },
+                                        ) {
                                             Row(
-                                                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                                modifier =
+                                                    Modifier.background(
+                                                            brush =
+                                                                when (item.transactionType) {
+                                                                    TransactionType.INCOME ->
+                                                                        Brush.linearGradient(
+                                                                            0f to
+                                                                                MaterialTheme
+                                                                                    .colorScheme
+                                                                                    .primaryContainer,
+                                                                            0.7f to
+                                                                                Color.Green.copy(
+                                                                                    alpha = 0.3f
+                                                                                ),
+                                                                            0.95f to
+                                                                                Color.Green.copy(
+                                                                                    alpha = 0.5f
+                                                                                ),
+                                                                            1f to
+                                                                                Color.Green.copy(
+                                                                                    alpha = 0.6f
+                                                                                ),
+                                                                        )
+
+                                                                    TransactionType.EXPENSE ->
+                                                                        Brush.linearGradient(
+                                                                            0f to
+                                                                                MaterialTheme
+                                                                                    .colorScheme
+                                                                                    .secondaryContainer,
+                                                                            0.7f to
+                                                                                Color.Red.copy(
+                                                                                    alpha = 0.3f
+                                                                                ),
+                                                                            0.95f to
+                                                                                Color.Red.copy(
+                                                                                    alpha = 0.5f
+                                                                                ),
+                                                                            1f to
+                                                                                Color.Red.copy(
+                                                                                    alpha = 0.6f
+                                                                                ),
+                                                                        )
+                                                                }
+                                                        )
+                                                        .fillMaxWidth()
+                                                        .padding(16.dp),
                                                 verticalAlignment = Alignment.CenterVertically,
                                                 horizontalArrangement = Arrangement.SpaceBetween,
                                             ) {
                                                 Column {
                                                     Text(
-                                                        text = "₹ ${item.amount.roundToInt()}",
+                                                        text =
+                                                            "${if (item.transactionType == TransactionType.INCOME) "+" else "-"}₹ ${item.amount.roundToInt()}",
                                                         style = MaterialTheme.typography.bodyLarge,
                                                     )
                                                     item.note?.let {
@@ -348,17 +440,12 @@ fun HomePage(state: HomeState, onAction: (HomeAction) -> Unit, modifier: Modifie
                 modifier = Modifier.align(Alignment.BottomEnd).padding(0.dp),
             ) {
                 FloatingActionButtonMenuItem(
-                    onClick = { TODO() },
-                    text = { Text(text = "Add Income") },
-                    icon = {},
-                )
-                FloatingActionButtonMenuItem(
-                    onClick = { TODO() },
+                    onClick = { showAddCategorySheet = true },
                     text = { Text(text = "Add Category") },
                     icon = {},
                 )
                 FloatingActionButtonMenuItem(
-                    onClick = { TODO() },
+                    onClick = { showAddTransactionSheet = true },
                     text = { Text(text = "Add Transaction") },
                     icon = {},
                 )
@@ -392,19 +479,7 @@ private fun Preview() {
                     date = Clock.System.now(),
                     note = "Transaction $it",
                     recurrence = Recurrence.entries.random(),
-                )
-            }
-        )
-    }
-    val incomes by remember {
-        mutableStateOf(
-            (0..2).map {
-                Income(
-                    id = it.toLong(),
-                    amount = 50000.0,
-                    title = "Income Source $it",
-                    description = "Description $it",
-                    recurrence = Recurrence.entries.random(),
+                    transactionType = TransactionType.entries.random(),
                 )
             }
         )
@@ -415,12 +490,15 @@ private fun Preview() {
             state =
                 HomeState(
                     name = "Shub39",
-                    currentCategory = categories.first(),
                     transactions = transactions,
-                    incomes = incomes,
-                    totalIncome = incomes.sumOf { it.amount },
-                    outstandingBalance =
-                        incomes.sumOf { it.amount } - transactions.sumOf { it.amount },
+                    totalExpenses =
+                        transactions
+                            .filter { it.transactionType == TransactionType.EXPENSE }
+                            .sumOf { it.amount },
+                    totalIncome =
+                        transactions
+                            .filter { it.transactionType == TransactionType.INCOME }
+                            .sumOf { it.amount },
                     allCategories = categories,
                 ),
             onAction = {},

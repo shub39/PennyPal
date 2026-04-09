@@ -47,6 +47,7 @@ import ir.ehsannarmani.compose_charts.models.HorizontalIndicatorProperties
 import ir.ehsannarmani.compose_charts.models.LabelHelperProperties
 import ir.ehsannarmani.compose_charts.models.LabelProperties
 import ir.ehsannarmani.compose_charts.models.VerticalIndicatorProperties
+import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.vectorResource
 import pennypal.composeapp.generated.resources.Res
 import pennypal.composeapp.generated.resources.trend_down
@@ -82,7 +83,9 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
                     // avg monthly expense
                     ListItem(
                         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        headlineContent = { Text(text = "₹ ${state.avgMonthlyIncome}") },
+                        headlineContent = {
+                            Text(text = "₹ ${state.avgMonthlyIncome.roundToInt()}")
+                        },
                         supportingContent = { Text(text = "Your average monthly income") },
                         leadingContent = {
                             Icon(
@@ -111,7 +114,9 @@ fun AnalyticsPage(state: AnalyticsState, modifier: Modifier = Modifier) {
                 item {
                     ListItem(
                         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        headlineContent = { Text(text = "₹ ${state.avgMonthlyExpenditure}") },
+                        headlineContent = {
+                            Text(text = "₹ ${state.avgMonthlyExpenditure.roundToInt()}")
+                        },
                         supportingContent = { Text(text = "Your average monthly expenditure") },
                         leadingContent = {
                             Icon(

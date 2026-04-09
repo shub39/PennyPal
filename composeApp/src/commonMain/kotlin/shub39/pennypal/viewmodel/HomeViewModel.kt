@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -33,15 +33,12 @@ class HomeViewModel(private val repository: AppRepository) : ViewModel() {
                 initialValue = HomeState(),
             )
 
-    private fun collectDatabase() {
-        repository
-            .getCategories()
-            .onEach { categories ->
-                if (categories.isEmpty()) {
-                    seedDefaultCategories()
-                }
-            }
-            .launchIn(viewModelScope)
+    private suspend fun collectDatabase() {
+        val categories = repository.getCategories().first()
+        if (categories.isEmpty()) {
+            seedDefaultCategories()
+            repository.addDummyData()
+        }
 
         combine(repository.getTransactions(), repository.getCategories()) { transactions, categories
                 ->

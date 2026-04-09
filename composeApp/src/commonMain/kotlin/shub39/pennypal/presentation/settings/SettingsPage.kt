@@ -160,8 +160,7 @@ fun SettingsPage(
                         headlineContent = { Text(text = "Add dummy Data") },
                         supportingContent = {
                             Text(
-                                text =
-                                    "Populate the database with default data",
+                                text = "Populate the database with default data",
                                 maxLines = 1,
                                 modifier = Modifier.basicMarquee(),
                             )
@@ -238,7 +237,7 @@ private fun Preview() {
             isDataEmpty = false,
             userName = "User",
             onChangeUserName = {},
-            onAddData = {}
+            onAddData = {},
         )
     }
 }

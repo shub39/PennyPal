@@ -275,7 +275,7 @@ private fun TransactionList(
         }
     } else {
         val itemsGroupedByCategory =
-            transactions.groupBy { item -> allCategories.find { it.id == item.categoryId }!! }
+            transactions.groupBy { item -> allCategories.find { it.id == item.categoryId } }
         LazyColumn(
             modifier =
                 modifier.fillMaxWidth().clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
@@ -283,6 +283,8 @@ private fun TransactionList(
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             itemsGroupedByCategory.forEach { (category, categoryTransactions) ->
+                if (category == null) return@forEach
+
                 item {
                     CategoryGroup(
                         category = category,

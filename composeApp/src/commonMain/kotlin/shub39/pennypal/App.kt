@@ -143,6 +143,7 @@ fun App() {
                                 appTheme = appTheme,
                                 onChangeAppTheme = { appTheme = it },
                                 onDeleteData = viewModel::onDeleteData,
+                                onAddData = viewModel::onAddData,
                                 isDataEmpty = isDataEmpty,
                             )
                         }

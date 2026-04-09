@@ -16,4 +16,6 @@ interface AppRepository {
     suspend fun deleteCategory(categoryId: Long)
 
     suspend fun deleteAllData()
+
+    suspend fun addDummyData()
 }

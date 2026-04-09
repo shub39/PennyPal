@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.vectorResource
 import pennypal.composeapp.generated.resources.Res
+import pennypal.composeapp.generated.resources.add
 import pennypal.composeapp.generated.resources.dark_mode
 import pennypal.composeapp.generated.resources.delete
 import pennypal.composeapp.generated.resources.light_mode
@@ -43,6 +44,7 @@ import shub39.pennypal.domain.AppTheme.Companion.toDisplayString
 import shub39.pennypal.presentation.endItemShape
 import shub39.pennypal.presentation.leadingItemShape
 import shub39.pennypal.presentation.listItemColors
+import shub39.pennypal.presentation.middleItemShape
 import shub39.pennypal.presentation.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -53,6 +55,7 @@ fun SettingsPage(
     appTheme: AppTheme,
     onChangeAppTheme: (AppTheme) -> Unit,
     onDeleteData: () -> Unit,
+    onAddData: () -> Unit,
     isDataEmpty: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -146,6 +149,43 @@ fun SettingsPage(
                     }
                 }
 
+                Column(modifier = Modifier.clip(middleItemShape())) {
+                    ListItem(
+                        leadingContent = {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.add),
+                                contentDescription = null,
+                            )
+                        },
+                        headlineContent = { Text(text = "Add dummy Data") },
+                        supportingContent = {
+                            Text(
+                                text =
+                                    "Populate the database with default data",
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee(),
+                            )
+                        },
+                        colors = listItemColors(),
+                    )
+                    Row(
+                        horizontalArrangement =
+                            Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                        modifier =
+                            Modifier.fillMaxWidth()
+                                .background(listItemColors().containerColor)
+                                .padding(start = 52.dp, end = 16.dp, bottom = 8.dp),
+                    ) {
+                        Button(
+                            onClick = onAddData,
+                            enabled = isDataEmpty,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(text = "Add Data")
+                        }
+                    }
+                }
+
                 Column(modifier = Modifier.clip(endItemShape())) {
                     ListItem(
                         leadingContent = {
@@ -198,6 +238,7 @@ private fun Preview() {
             isDataEmpty = false,
             userName = "User",
             onChangeUserName = {},
+            onAddData = {}
         )
     }
 }

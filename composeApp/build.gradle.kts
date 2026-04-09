@@ -49,7 +49,7 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.materialkolor)
-            implementation("io.github.ehsannarmani:compose-charts:0.2.5")
+            implementation(libs.compose.charts)
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)

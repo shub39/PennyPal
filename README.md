@@ -35,7 +35,7 @@ You can open the project in Android Studio and build it from there or build it f
 
 ### iOS
 
-> ![NOTE]
+> [!NOTE]
 > Not tested on iOS since I don't have a Macbook, which is required to build iOS apps
 
 To build and run the iOS application, you will need a Mac with Xcode installed.

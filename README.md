@@ -5,14 +5,6 @@ Sharing 100% UI and business logic.
 
 ## Screenshots
 
-### Android
-
-| Home Page | Analytics Page | Settings Page |
-|:---------:|:--------------:|:-------------:|
-|           |                |               |
-
-### iOS
-
 | Home Page | Analytics Page | Settings Page |
 |:---------:|:--------------:|:-------------:|
 |           |                |               |
@@ -26,8 +18,29 @@ Sharing 100% UI and business logic.
 - Pie Chart for Income/Expense distribution
 
 ## Setup Instructions
-# Android
-You can open the project in Android Studio and build it from there or build it from the terminal
+
+### Prerequisites
+- JDK 17 or higher
+- Android Studio (latest stable version recommended)
+- Xcode (for iOS builds, macOS only)
+
+### Android
+You can open the project in Android Studio and build it from there or build it from the terminal:
 ```shell
 ./gradlew :androidApp:assembleDebug
+```
+
+### iOS
+To build and run the iOS application, you will need a Mac with Xcode installed.
+
+#### Using Xcode
+1. Navigate to the `iosApp` directory.
+2. Open `iosApp.xcodeproj` in Xcode.
+3. Select a simulator or a connected iOS device.
+4. Click the **Run** button (or press `Cmd + R`).
+
+#### Using Terminal
+You can also run the iOS application directly from the terminal using the following command:
+```shell
+./gradlew :composeApp:iosSimulatorArm64Run
 ```
